@@ -18,6 +18,38 @@ public class config {
         return con;
     }
 
+    public void addRecord(String sql, Object... values) {
+    try (Connection conn = connectDB();
+         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+        for (int i = 0; i < values.length; i++) {
+            pstmt.setObject(i + 1, values[i]);
+        }
+
+        pstmt.executeUpdate();
+        System.out.println("Record added successfully!");
+    } catch (SQLException e) {
+        System.out.println("Error adding record: " + e.getMessage());
+    }
+} 
+    public String authenticate(String sql, Object... values) {
+    try (Connection conn = connectDB();
+         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+        for (int i = 0; i < values.length; i++) {
+            pstmt.setObject(i + 1, values[i]);
+        }
+
+        try (ResultSet rs = pstmt.executeQuery()) {
+            if (rs.next()) {
+                return rs.getString("type");
+            }
+        }
+    } catch (SQLException e) {
+        System.out.println("Login Error: " + e.getMessage());
+    }
+    return null;
+}
     // 2. Optimized Display Data (Handles Search & Loading)
     public void displayData(String sql, JTable table, Object... params) {
         try (Connection conn = connectDB();
