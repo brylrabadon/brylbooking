@@ -136,8 +136,8 @@ public class login extends javax.swing.JFrame {
     }//GEN-LAST:event_jLabel4MouseClicked
 
     private void jLabel3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel3MouseClicked
-    String user = loginuser.getText();
-    String rawPass = loginpass.getText();
+    String user = loginuser.getText().trim();
+    String rawPass = loginpass.getText().trim();
 
     if(user.isEmpty() || rawPass.isEmpty()){
         JOptionPane.showMessageDialog(null, "Please fill in all fields!");
@@ -148,54 +148,59 @@ public class login extends javax.swing.JFrame {
         config db = new config();
         String hashedPass = passwordhashed.hashPassword(rawPass);
         
-        String query = "SELECT * FROM accounts WHERE username = '" + user + "' AND password = '" + hashedPass + "'";
-        java.sql.ResultSet rs = db.getData(query);
+        // 1. USE PARAMETERS (?) TO PREVENT SQL INJECTION
+        String query = "SELECT * FROM accounts WHERE username = ? AND password = ?";
         
-        if (rs.next()) {
+        // 2. FETCH DATA (Using our new refactored getData that closes the connection)
+        java.sql.ResultSet rs = db.getData(query, user, hashedPass);
+        
+        if (rs != null && rs.next()) {
             String status = rs.getString("account_status");
+            
             if (!status.equalsIgnoreCase("Active")) {
                 JOptionPane.showMessageDialog(null, "This account is " + status + ". Please contact support.");
                 return;
             }
 
-            // Initialize Session
+            // 3. SET SESSION DATA
             session sess = session.getInstance();
             sess.setAccountId(rs.getInt("account_id")); 
+            sess.setUsername(rs.getString("username"));
+            sess.setRole(rs.getString("role"));
+            sess.setStatus(status);
             
             String role = rs.getString("role");
-System.out.println("User Role Found: " + role); // CHECK YOUR CONSOLE FOR THIS
-
-sess.setRole(role);
-            sess.setStatus(status);
-            sess.setUsername(rs.getString("username"));
-            sess.setPass(rawPass); 
-
-            JOptionPane.showMessageDialog(null, "Login Success!");
+            JOptionPane.showMessageDialog(null, "Login Success! Welcome, " + rs.getString("first_name"));
             
-            // --- ROLE-BASED REDIRECTION LOGIC ---
-if (role != null && role.equalsIgnoreCase("Admin")) {
-    dashboardAdmin.dashboardadmin adminDash = new dashboardAdmin.dashboardadmin();
-    adminDash.setVisible(true);
-    this.dispose();
-} 
-else if (role != null && role.equalsIgnoreCase("Guest")) {
-    dashboardUser.dashboardguest guestDash = new dashboardUser.dashboardguest();
-    guestDash.setVisible(true);
-    this.dispose();
-} 
-else {
-    JOptionPane.showMessageDialog(null, "Login Success, but Role '" + role + "' is invalid.");
-}
-            // ------------------------------------
+            // 4. REDIRECT BASED ON ROLE
+            this.dispose(); // Close login first to free up resources
+            
+            if (role.equalsIgnoreCase("Admin")) {
+                new dashboardAdmin.dashboardadmin().setVisible(true);
+            } 
+            else if (role.equalsIgnoreCase("Staff")) {
+                new dashboardStaff.dashboardstaff().setVisible(true);
+            } 
+            else if (role.equalsIgnoreCase("Guest")) {
+                new dashboardUser.dashboardguest().setVisible(true);
+            } 
+            else {
+                JOptionPane.showMessageDialog(null, "Role '" + role + "' is not recognized.");
+            }
             
         } else {
             JOptionPane.showMessageDialog(null, "Invalid Username or Password!");
         }
+        
+        // NO NEED TO MANUALLY CLOSE rs HERE - CachedRowSet handled the DB connection!
+        
     } catch (Exception e) {
-        JOptionPane.showMessageDialog(null, "Connection Error: " + e.getMessage());
+        JOptionPane.showMessageDialog(null, "Login Error: " + e.getMessage());
+        e.printStackTrace();
     }
 
-    
+
+
     }//GEN-LAST:event_jLabel3MouseClicked
 
     private void jPanel3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel3MouseClicked

@@ -19,6 +19,10 @@ public class addrooms extends javax.swing.JFrame {
         return; 
     }
         initComponents();
+        comboRoomTypeName.removeAllItems();
+        comboRoomTypeName.addItem("-- Select Type --");
+    
+    // Set fixed statuses
         comboRoomStat.setModel(new DefaultComboBoxModel<>(new String[] { "Available", "Occupied", "Maintenance" }));
     }
 
@@ -142,6 +146,11 @@ public class addrooms extends javax.swing.JFrame {
                 comboRoomTypeNameMouseClicked(evt);
             }
         });
+        comboRoomTypeName.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                comboRoomTypeNameActionPerformed(evt);
+            }
+        });
         jPanel1.add(comboRoomTypeName, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 160, 140, 30));
 
         comboRoomStat.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
@@ -173,42 +182,56 @@ public class addrooms extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jLabel9MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel9MouseClicked
-        Object selected = comboRoomTypeName.getSelectedItem();
-        if (selected == null) {
-            JOptionPane.showMessageDialog(this, "Please select a Room Type!");
-            return;
-        }
+    String rNum = roomnum1.getText().trim();
+    String rPrice = roompr.getText().trim();
+    Object typeSelected = comboRoomTypeName.getSelectedItem();
+
+    // 1. Validation
+    if (rNum.isEmpty() || rPrice.isEmpty() || typeSelected.toString().contains("--")) {
+        JOptionPane.showMessageDialog(this, "Please fill all required fields!");
+        return;
+    }
+
+    try {
+        int rTypeID = Integer.parseInt(typeSelected.toString().split(" - ")[0]);
+        double price = Double.parseDouble(rPrice);
         
-        String selectedItem = selected.toString();
-        int rTypeID = Integer.parseInt(selectedItem.split(" - ")[0]);
-        String rStatus = comboRoomStat.getSelectedItem().toString();
+        config.config conf = new config.config();
+        
+        // 2. Use a generic insert method in your config or a direct statement
+        String sql = "INSERT INTO rooms (room_number, room_type_id, floor, room_price, status, description) VALUES (?, ?, ?, ?, ?, ?)";
+        
+        // Check if room number already exists to prevent crashes
+        java.sql.ResultSet check = conf.getData("SELECT * FROM rooms WHERE room_number = ?", rNum);
+        if(check.next()){
+             JOptionPane.showMessageDialog(this, "Room Number " + rNum + " already exists!");
+             return;
+        }
 
-        try (Connection conn = DriverManager.getConnection("jdbc:sqlite:booking.db")) {
-            String sql = "INSERT INTO rooms(room_number, room_type_id, floor, room_price, status, description) VALUES(?,?,?,?,?,?)";
-            PreparedStatement pstmt = conn.prepareStatement(sql);
-
-            pstmt.setString(1, roomnum1.getText()); // Use roomnum1 based on your variables
+        // 3. Execute the Insert using a connection that CLOSES automatically
+        try (Connection conn = conf.connectDB(); 
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setString(1, rNum);
             pstmt.setInt(2, rTypeID);
             pstmt.setString(3, floor.getText());
-            pstmt.setDouble(4, Double.parseDouble(roompr.getText()));
-            pstmt.setString(5, rStatus); 
-            pstmt.setString(6, desc.getText()); 
-
+            pstmt.setDouble(4, price);
+            pstmt.setString(5, comboRoomStat.getSelectedItem().toString());
+            pstmt.setString(6, desc.getText());
+            
             pstmt.executeUpdate();
             JOptionPane.showMessageDialog(this, "Room Added Successfully!");
-
-            // Redirect and Refresh
-            managerooms manage = new managerooms();
-            manage.setVisible(true); 
-            this.dispose();          
             
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
+            new managerooms().setVisible(true);
+            this.dispose();
         }
-    
 
-    
-    
+    } catch (NumberFormatException e) {
+        JOptionPane.showMessageDialog(this, "Price must be a valid number!");
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
+    }
+
 
     }//GEN-LAST:event_jLabel9MouseClicked
 
@@ -236,21 +259,20 @@ public class addrooms extends javax.swing.JFrame {
     }//GEN-LAST:event_roomidActionPerformed
 
     private void comboRoomTypeNameMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_comboRoomTypeNameMouseClicked
-        try {
-            Connection conn = DriverManager.getConnection("jdbc:sqlite:booking.db");
-            String sql = "SELECT room_type_id, type_name FROM room_type"; 
-            PreparedStatement pstmt = conn.prepareStatement(sql);
-            ResultSet rs = pstmt.executeQuery();
-
-            comboRoomTypeName.removeAllItems();
-            while (rs.next()) {
-                comboRoomTypeName.addItem(rs.getInt("room_type_id") + " - " + rs.getString("type_name"));
-            }
-            conn.close();
-        } catch (Exception e) {
-            System.out.println("Error populating combo: " + e.getMessage());
-        }
+    // Use the refactored config method to get data safely
+    config.config conf = new config.config();
+    String query = "SELECT room_type_id, type_name FROM room_type WHERE status = 'Active'";
     
+    try (java.sql.ResultSet rs = conf.getData(query)) {
+        comboRoomTypeName.removeAllItems();
+        comboRoomTypeName.addItem("-- Select Type --");
+        
+        while (rs != null && rs.next()) {
+            comboRoomTypeName.addItem(rs.getInt("room_type_id") + " - " + rs.getString("type_name"));
+        }
+    } catch (SQLException e) {
+        System.out.println("Error populating types: " + e.getMessage());
+    }
 
     }//GEN-LAST:event_comboRoomTypeNameMouseClicked
 
@@ -288,6 +310,44 @@ public class addrooms extends javax.swing.JFrame {
         }
     
     }//GEN-LAST:event_comboRoomStatMouseClicked
+
+    private void comboRoomTypeNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboRoomTypeNameActionPerformed
+    Object selected = comboRoomTypeName.getSelectedItem();
+    if (selected == null || selected.toString().contains("--")) return;
+
+    try {
+        // 1. Get the ID from the selection "1 - Deluxe"
+        int typeId = Integer.parseInt(selected.toString().split(" - ")[0]);
+        
+        config.config conf = new config.config();
+        
+        // 2. Check if all current rooms of this type are occupied
+        String checkSql = "SELECT status FROM rooms WHERE room_type_id = ?";
+        java.sql.ResultSet rs = conf.getData(checkSql, typeId);
+        
+        boolean hasAvailable = false;
+        int count = 0;
+        
+        while(rs.next()){
+            count++;
+            if(rs.getString("status").equalsIgnoreCase("Available")){
+                hasAvailable = true;
+            }
+        }
+        
+        // 3. Logic: If there are existing rooms and NONE are available
+        if (count > 0 && !hasAvailable) {
+            JOptionPane.showMessageDialog(this, "Note: All existing rooms of this type are currently OCCUPIED.");
+            comboRoomStat.setSelectedItem("Available"); // Set the NEW room to Available by default
+        } else {
+            comboRoomStat.setSelectedItem("Available");
+        }
+        
+    } catch (Exception e) {
+        System.out.println("Status Check Error: " + e.getMessage());
+    }
+        // TODO add your handling code here:
+    }//GEN-LAST:event_comboRoomTypeNameActionPerformed
 
     /**
      * @param args the command line arguments

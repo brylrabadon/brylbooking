@@ -100,7 +100,7 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="USERID" min="-2" pref="60" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="guest_id" pref="66" max="32767" attributes="0"/>
+                      <Component id="accts_id" pref="66" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -108,7 +108,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="103" alignment="0" groupAlignment="3" attributes="0">
                       <Component id="USERID" alignment="3" max="32767" attributes="0"/>
-                      <Component id="guest_id" alignment="3" pref="30" max="32767" attributes="0"/>
+                      <Component id="accts_id" alignment="3" pref="30" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -122,12 +122,12 @@
                 <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="1"/>
               </AuxValues>
             </Component>
-            <Component class="javax.swing.JTextField" name="guest_id">
+            <Component class="javax.swing.JTextField" name="accts_id">
               <Properties>
                 <Property name="editable" type="boolean" value="false"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="guest_idActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="accts_idActionPerformed"/>
               </Events>
             </Component>
           </SubComponents>

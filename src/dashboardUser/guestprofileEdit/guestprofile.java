@@ -16,17 +16,14 @@ import javax.swing.JOptionPane;
  */
 public class guestprofile extends javax.swing.JFrame {
 
-    /**
-     * Creates new form userprofile
-     */
-public guestprofile() {
+
+    public guestprofile() {
     session sess = session.getInstance();
 
-    // 1. Safety Check: If accountId is 0, the session didn't save the login info
+    // 1. Safety Check: If accountId is 0, user is not logged in
     if (sess.getAccountId() == 0) {
         JOptionPane.showMessageDialog(null, "Required to Log in!");
-        main.login loginForm = new main.login();
-        loginForm.setVisible(true);
+        new main.login().setVisible(true);
         this.dispose(); 
         return; 
     }
@@ -37,37 +34,32 @@ public guestprofile() {
         config conf = new config();
         int accId = sess.getAccountId(); 
         
-        // 2. The SQL Query: We link 'accounts' to 'guest' using the guest_id
-        // We use '?' as a placeholder for the executeUpdate/getData parameters
-        String sql = "SELECT g.* FROM guest g " +
-                     "JOIN accounts a ON g.guest_id = a.guest_id " +
-                     "WHERE a.account_id = ?";
+        // 2. Simplified SQL Query: Select everything from accounts for the logged-in ID
+        String sql = "SELECT * FROM accounts WHERE account_id = " + accId;
                      
-        // 3. Fetch data passing the accId as a parameter
-        java.sql.ResultSet rs = conf.getData(sql, accId);
+        // 3. Fetch data using your config helper
+        java.sql.ResultSet rs = conf.getData(sql);
 
-        if (rs.next()) {
-            // 4. Populate UI from the Database result set
-            guest_id.setText("" + rs.getInt("guest_id"));
-            fname.setText(rs.getString("first_name"));
-            lname.setText(rs.getString("last_name"));
-            email.setText(rs.getString("email"));
-            contact.setText(rs.getString("contact"));
-            uname.setText(rs.getString("username"));
-            
-            // Password usually comes from the session for security/display
-            pass.setText(sess.getPass()); 
-            
-            // 5. IMPORTANT: Sync the session guestId so the Edit page knows who to update
-            sess.setGuestId(rs.getInt("guest_id"));
-            sess.setFname(rs.getString("first_name"));
-            sess.setLname(rs.getString("last_name"));
-            sess.setEmail(rs.getString("email"));
-            sess.setContact(rs.getString("contact"));
-            sess.setUsername(rs.getString("username"));
+        // Inside the try-block of your guestprofile constructor
+if (rs.next()) {
+    accts_id.setText("" + rs.getInt("account_id"));
+    fname.setText(rs.getString("first_name"));
+    lname.setText(rs.getString("last_name"));
+    email.setText(rs.getString("email"));
+    contact.setText(rs.getString("contact"));
+    uname.setText(rs.getString("username"));
 
-        } else {
-            System.out.println("No guest record found for Account ID: " + accId);
+    // REVEAL TRUE PASSWORD: 
+    // Pull the plain-text password from the session instead of the database result
+    pass.setText(sess.getPass()); 
+
+    // Sync other session data
+    sess.setFname(rs.getString("first_name"));
+    sess.setLname(rs.getString("last_name"));
+    sess.setEmail(rs.getString("email"));
+    sess.setContact(rs.getString("contact"));
+    sess.setUsername(rs.getString("username"));
+} else {
             JOptionPane.showMessageDialog(null, "Profile data not found.");
         }
     } catch (Exception e) {
@@ -88,8 +80,8 @@ public guestprofile() {
         jPanel3 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jPanel11 = new javax.swing.JPanel();
-        USERID = new javax.swing.JLabel();
-        guest_id = new javax.swing.JTextField();
+        accounts_id = new javax.swing.JLabel();
+        accts_id = new javax.swing.JTextField();
         jLabel7 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
@@ -125,12 +117,12 @@ public guestprofile() {
 
         jPanel11.setBackground(new java.awt.Color(204, 204, 204));
 
-        USERID.setText("GUEST ID:");
+        accounts_id.setText("Accounts ID:");
 
-        guest_id.setEditable(false);
-        guest_id.addActionListener(new java.awt.event.ActionListener() {
+        accts_id.setEditable(false);
+        accts_id.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                guest_idActionPerformed(evt);
+                accts_idActionPerformed(evt);
             }
         });
 
@@ -140,15 +132,15 @@ public guestprofile() {
             jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel11Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(USERID, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(accounts_id, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(guest_id, javax.swing.GroupLayout.DEFAULT_SIZE, 66, Short.MAX_VALUE))
+                .addComponent(accts_id, javax.swing.GroupLayout.DEFAULT_SIZE, 45, Short.MAX_VALUE))
         );
         jPanel11Layout.setVerticalGroup(
             jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                .addComponent(USERID, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(guest_id, javax.swing.GroupLayout.DEFAULT_SIZE, 30, Short.MAX_VALUE))
+                .addComponent(accounts_id, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(accts_id, javax.swing.GroupLayout.DEFAULT_SIZE, 30, Short.MAX_VALUE))
         );
 
         jPanel2.add(jPanel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 140, 140, 30));
@@ -229,6 +221,9 @@ public guestprofile() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jLabel9MouseClicked(evt);
             }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                jLabel9MouseEntered(evt);
+            }
         });
         jPanel1.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 10, -1, -1));
 
@@ -248,9 +243,9 @@ public guestprofile() {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void guest_idActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guest_idActionPerformed
+    private void accts_idActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_accts_idActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_guest_idActionPerformed
+    }//GEN-LAST:event_accts_idActionPerformed
 
     private void lnameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lnameActionPerformed
         // TODO add your handling code here:
@@ -281,6 +276,10 @@ public guestprofile() {
         dash.setVisible(true); // Show the dashboard again
         this.dispose();   // TODO add your handling code here:
     }//GEN-LAST:event_jLabel9MouseClicked
+
+    private void jLabel9MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel9MouseEntered
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jLabel9MouseEntered
 
     /**
      * @param args the command line arguments
@@ -319,12 +318,12 @@ public guestprofile() {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    public javax.swing.JLabel USERID;
+    public javax.swing.JLabel accounts_id;
+    private javax.swing.JTextField accts_id;
     private javax.swing.JLabel back;
-    private javax.swing.JTextField contact;
-    private javax.swing.JTextField email;
-    private javax.swing.JTextField fname;
-    private javax.swing.JTextField guest_id;
+    public javax.swing.JTextField contact;
+    public javax.swing.JTextField email;
+    public javax.swing.JTextField fname;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -339,8 +338,8 @@ public guestprofile() {
     public javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
-    private javax.swing.JTextField lname;
-    private javax.swing.JTextField pass;
-    private javax.swing.JTextField uname;
+    public javax.swing.JTextField lname;
+    public javax.swing.JTextField pass;
+    public javax.swing.JTextField uname;
     // End of variables declaration//GEN-END:variables
 }

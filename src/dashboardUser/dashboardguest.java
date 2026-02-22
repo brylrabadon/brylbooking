@@ -1,41 +1,55 @@
 package dashboardUser;
 
+
 import dashboardUser.guestprofileEdit.guestprofile;
 import config.session;
 import config.config;
+import java.sql.ResultSet; // FIXED: Added missing import
 import javax.swing.JOptionPane;
 import main.login;
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
-
-/**
- *
- * @author Personal-PC
- */
 public class dashboardguest extends javax.swing.JFrame {
 
-    /**
-     * Creates new form dashboarduser
-     */
-public dashboardguest() { 
-    
-    session sess = session.getInstance();// or public dashboardguest()
-    // 1. Security Check FIRST
-    if (sess.getAccountId() == 0) {
-        javax.swing.JOptionPane.showMessageDialog(null, "Required to Log in! Access Denied.");
-        new main.login().setVisible(true);
-        this.dispose();
-        return; 
+    public dashboardguest() { 
+        session sess = session.getInstance();
+        
+        // 1. Security Check
+        if (sess.getAccountId() == 0) {
+            JOptionPane.showMessageDialog(null, "Required to Log in! Access Denied.");
+            new main.login().setVisible(true);
+            this.dispose();
+            return; 
+        }
+        
+        initComponents();
+        loadGuestProfile();
+        welcome_guest.setText("Welcome, " + sess.getUsername());
     }
-    
-    // 2. Only build UI if valid
-    initComponents();
-    welcome_user.setText("Welcome, " + session.getInstance().getUsername());
+
+   private void loadGuestProfile() {
+    try {
+        session sess = session.getInstance();
+        int accId = sess.getAccountId();
+        config db = new config();
+
+        // Simplified query: Everything is in the 'accounts' table now
+        String query = "SELECT * FROM accounts WHERE account_id = " + accId;
+        ResultSet rs = db.getData(query);
+
+        if (rs.next()) {
+            // 1. Sync the data into your session object
+            // This makes the data available "automatically" across all screens
+            sess.setFname(rs.getString("first_name"));
+            sess.setLname(rs.getString("last_name"));
+            sess.setEmail(rs.getString("email"));
+            sess.setContact(rs.getString("contact"));
+            sess.setUsername(rs.getString("username"));
+            
+            
+        }
+    } catch (Exception e) {
+        System.out.println("Error fetching profile: " + e.getMessage());
+    }
 }
 
     /**
@@ -63,7 +77,7 @@ public dashboardguest() {
         logout = new javax.swing.JLabel();
         jPanel9 = new javax.swing.JPanel();
         books = new javax.swing.JLabel();
-        welcome_user = new javax.swing.JLabel();
+        welcome_guest = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -86,25 +100,28 @@ public dashboardguest() {
 
         jPanel7.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jLabel6.setText("UserDashboard");
-        jPanel7.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 10, 90, -1));
+        jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel6.setText("Guest Dashboard");
+        jPanel7.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 200, 40));
 
-        jPanel8.add(jPanel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 40, 140, 30));
+        jPanel8.add(jPanel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 30, 200, 40));
 
         jPanel4.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
+        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel3.setText("Book");
         jLabel3.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jLabel3MouseClicked(evt);
             }
         });
-        jPanel4.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 10, -1, -1));
+        jPanel4.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 200, 40));
 
-        jPanel8.add(jPanel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 90, 140, 30));
+        jPanel8.add(jPanel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 80, 200, 40));
 
         payments.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
+        pay.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         pay.setText("Payments");
         pay.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -114,12 +131,13 @@ public dashboardguest() {
                 payMouseEntered(evt);
             }
         });
-        payments.add(pay, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 0, -1, 30));
+        payments.add(pay, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 200, 40));
 
-        jPanel8.add(payments, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 190, 140, 30));
+        jPanel8.add(payments, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 180, 200, 40));
 
         jPanel3.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
+        user_profile.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         user_profile.setText("User Profile");
         user_profile.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -132,39 +150,41 @@ public dashboardguest() {
                 user_profileMouseExited(evt);
             }
         });
-        jPanel3.add(user_profile, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 10, 70, 10));
+        jPanel3.add(user_profile, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 200, 40));
 
-        jPanel8.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 250, 140, 30));
+        jPanel8.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 230, 200, 40));
 
         jPanel6.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
+        logout.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         logout.setText("LOG OUT");
         logout.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 logoutMouseClicked(evt);
             }
         });
-        jPanel6.add(logout, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 10, -1, -1));
+        jPanel6.add(logout, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 200, 40));
 
-        jPanel8.add(jPanel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 300, 140, 30));
+        jPanel8.add(jPanel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 280, 200, 40));
 
         jPanel9.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
+        books.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         books.setText("MyBookings");
         books.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 booksMouseClicked(evt);
             }
         });
-        jPanel9.add(books, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 0, -1, 30));
+        jPanel9.add(books, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 200, 40));
 
-        jPanel8.add(jPanel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 140, 140, 30));
+        jPanel8.add(jPanel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 130, 200, 40));
 
         jPanel1.add(jPanel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 100, 260, 460));
 
-        welcome_user.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        welcome_user.setText("Welcome, username");
-        jPanel1.add(welcome_user, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 120, 200, 40));
+        welcome_guest.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        welcome_guest.setText("Welcome, guestname");
+        jPanel1.add(welcome_guest, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 120, 200, 40));
 
         jLabel7.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
         jLabel7.setText("INTRODUCTION");
@@ -292,5 +312,6 @@ public dashboardguest() {
     private javax.swing.JLabel pay;
     private javax.swing.JPanel payments;
     private javax.swing.JLabel user_profile;
-    private javax.swing.JLabel welcome_user;
+    private javax.swing.JLabel welcome_guest;
     // End of variables declaration//GEN-END:variables
+}

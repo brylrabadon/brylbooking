@@ -6,8 +6,8 @@
 package dashboardUser.guestprofileEdit;
 
 import javax.swing.JOptionPane;
-import config.config;
 import config.session;
+import config.config;
 import config.passwordhashed;
 
 
@@ -24,7 +24,7 @@ public class editguestprofile extends javax.swing.JFrame {
 public void displayData() {
     session sess = session.getInstance();
     // Use the specific Guest ID for the guest table
-    guest_id.setText("" + sess.getGuestId()); 
+    accts_id.setText("" + sess.getAccountId()); 
     edit_fname.setText(sess.getFname());
     edit_lname.setText(sess.getLname());
     edit_email.setText(sess.getEmail());
@@ -47,7 +47,7 @@ public void displayData() {
         jLabel1 = new javax.swing.JLabel();
         jPanel11 = new javax.swing.JPanel();
         USERID = new javax.swing.JLabel();
-        guest_id = new javax.swing.JTextField();
+        accts_id = new javax.swing.JTextField();
         jLabel7 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
@@ -85,10 +85,10 @@ public void displayData() {
 
         USERID.setText("GUEST ID:");
 
-        guest_id.setEditable(false);
-        guest_id.addActionListener(new java.awt.event.ActionListener() {
+        accts_id.setEditable(false);
+        accts_id.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                guest_idActionPerformed(evt);
+                accts_idActionPerformed(evt);
             }
         });
 
@@ -100,13 +100,13 @@ public void displayData() {
                 .addContainerGap()
                 .addComponent(USERID, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(guest_id, javax.swing.GroupLayout.DEFAULT_SIZE, 66, Short.MAX_VALUE))
+                .addComponent(accts_id, javax.swing.GroupLayout.DEFAULT_SIZE, 66, Short.MAX_VALUE))
         );
         jPanel11Layout.setVerticalGroup(
             jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                 .addComponent(USERID, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(guest_id, javax.swing.GroupLayout.DEFAULT_SIZE, 30, Short.MAX_VALUE))
+                .addComponent(accts_id, javax.swing.GroupLayout.DEFAULT_SIZE, 30, Short.MAX_VALUE))
         );
 
         jPanel2.add(jPanel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 140, 140, 30));
@@ -196,9 +196,9 @@ public void displayData() {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void guest_idActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guest_idActionPerformed
+    private void accts_idActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_accts_idActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_guest_idActionPerformed
+    }//GEN-LAST:event_accts_idActionPerformed
 
     private void edit_lnameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_edit_lnameActionPerformed
         // TODO add your handling code here:
@@ -225,56 +225,53 @@ public void displayData() {
     }//GEN-LAST:event_backMouseExited
 
     private void jLabel9MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel9MouseClicked
-    session sess = session.getInstance();
-    
-    String id = guest_id.getText();
-    String first = edit_fname.getText();
-    String last = edit_lname.getText();
-    String email = edit_email.getText();
-    String cont = edit_contact.getText();
-    String newUser = edit_user.getText();
-    String rawPassword = edit_pass.getText();
+    session sess = session.getInstance(); //
+    config db = new config();
 
-    // 2. Validation
-    if(first.isEmpty() || last.isEmpty() || email.isEmpty() || newUser.isEmpty() || rawPassword.isEmpty()){
-        JOptionPane.showMessageDialog(null, "All fields are required!");
-        return;
-    }
-
+    // 1. Fetch data from the UI components
+    // Ensure these names match the "Variable Name" in the Design tab exactly
+    String firstName = edit_fname.getText(); 
+    String lastName  = edit_lname.getText();
+    String userEmail = edit_email.getText();
+    String userCont  = edit_contact.getText();
+    String userUname = edit_user.getText();
+    String rawPass = edit_pass.getText();
     try {
-        config db = new config();
-        // Hash the password before saving
-        String hashedPass = passwordhashed.hashPassword(rawPassword);
-
-        // 3. Update the 'guest' table
-        String guestSql = "UPDATE guest SET first_name = ?, last_name = ?, email = ?, "
-                        + "contact = ?, username = ?, password = ? WHERE guest_id = ?";
+        String updateQuery;
         
-        // This now works because your config.java is fixed!
-        int guestUpdated = db.executeUpdate(guestSql, first, last, email, cont, newUser, hashedPass, id);
-
-        if (guestUpdated > 0) {
-            // 4. Sync with 'accounts' table using the account_id from session
-            String accountSql = "UPDATE accounts SET username = ?, password = ? WHERE account_id = ?";
-            db.executeUpdate(accountSql, newUser, hashedPass, sess.getAccountId());
-
-            // 5. Update Session so other screens show the new data
-            sess.setFname(first);
-            sess.setLname(last);
-            sess.setEmail(email);
-            sess.setContact(cont);
-            sess.setUsername(newUser);
-            sess.setPass(rawPassword); 
-            
-            JOptionPane.showMessageDialog(null, "Profile Updated Successfully!");
-            backMouseClicked(null); 
+        // 2. Check for Password Update and use Hashing
+        if (!rawPass.isEmpty() && !rawPass.equals("********")) {
+            String hashedPass = passwordhashed.hashPassword(rawPass); 
+            updateQuery = "UPDATE accounts SET first_name = '" + firstName + "', "
+                        + "last_name = '" + lastName + "', email = '" + userEmail + "', "
+                        + "contact = '" + userCont + "', username = '" + userUname + "', "
+                        + "password = '" + hashedPass + "' "
+                        + "WHERE account_id = " + sess.getAccountId();
         } else {
-            JOptionPane.showMessageDialog(null, "Update Failed! Check if Guest ID exists.");
+            updateQuery = "UPDATE accounts SET first_name = '" + firstName + "', "
+                        + "last_name = '" + lastName + "', email = '" + userEmail + "', "
+                        + "contact = '" + userCont + "', username = '" + userUname + "' "
+                        + "WHERE account_id = " + sess.getAccountId();
+        }
+
+        // 3. Execute and Sync Session
+        if (db.executeUpdate(updateQuery) > 0) {
+            JOptionPane.showMessageDialog(null, "Guest Profile Updated Successfully!");
+            
+            // Sync session so changes reflect globally
+            sess.setFname(firstName);
+            sess.setLname(lastName);
+            sess.setEmail(userEmail);
+            sess.setContact(userCont);
+            sess.setUsername(userUname);
+            sess.setPass(rawPass);
+
+            new dashboardUser.guestprofileEdit.guestprofile().setVisible(true);
+            this.dispose();
         }
     } catch (Exception e) {
-        JOptionPane.showMessageDialog(null, "Error: " + e.getMessage());
+        System.out.println("Update Error: " + e.getMessage());
     }
-
 
     }//GEN-LAST:event_jLabel9MouseClicked
 
@@ -315,6 +312,7 @@ public void displayData() {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public javax.swing.JLabel USERID;
+    private javax.swing.JTextField accts_id;
     private javax.swing.JLabel back;
     private javax.swing.JTextField edit_contact;
     private javax.swing.JTextField edit_email;
@@ -322,7 +320,6 @@ public void displayData() {
     private javax.swing.JTextField edit_lname;
     private javax.swing.JTextField edit_pass;
     private javax.swing.JTextField edit_user;
-    private javax.swing.JTextField guest_id;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

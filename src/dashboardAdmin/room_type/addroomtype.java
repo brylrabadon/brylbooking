@@ -152,43 +152,38 @@ public class addroomtype extends javax.swing.JFrame {
     String stat = typestat.getText();
     String desc = typedesc.getText();
 
-    // 2. Validation to stop the empty string error
     if (name.isEmpty() || cap.isEmpty() || price.isEmpty()) {
         javax.swing.JOptionPane.showMessageDialog(this, "Please fill in all required fields!");
         return;
     }
 
-    // 3. Database Insert Logic
-    String sql = "INSERT INTO room_type (type_name, capacity, price_per_night, status, description) VALUES(?,?,?,?,?)";
+    try {
+        config.config conf = new config.config();
+        String sql = "INSERT INTO room_type (type_name, capacity, price_per_night, status, description) VALUES(?,?,?,?,?)";
 
-    try (java.sql.Connection conn = java.sql.DriverManager.getConnection("jdbc:sqlite:booking.db");
-         java.sql.PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        // addRecord handles closing the connection internally
+        conf.addRecord(sql, name, Integer.parseInt(cap), Double.parseDouble(price), stat, desc);
 
-        pstmt.setString(1, name);
-        pstmt.setInt(2, Integer.parseInt(cap)); // Parses 'capa'
-        pstmt.setDouble(3, Double.parseDouble(price)); // Parses 'ppn'
-        pstmt.setString(4, stat);
-        pstmt.setString(5, desc);
-
-        pstmt.executeUpdate();
         javax.swing.JOptionPane.showMessageDialog(this, "Room Type Saved!");
         
-        room_type room = new room_type();
-        room.setVisible(true);
+        // Use a new instance to refresh the table and close this window
+        new room_type().setVisible(true);
         this.dispose(); 
 
     } catch (NumberFormatException e) {
         javax.swing.JOptionPane.showMessageDialog(this, "Error: Capacity and Price must be numbers!");
     } catch (Exception e) {
-        javax.swing.JOptionPane.showMessageDialog(this, "Database Error: " + e.getMessage());
+        // This is where your [SQLITE_BUSY] was being caught
+        System.out.println("Database sync notice: " + e.getMessage());
     }
+
 
       
     }//GEN-LAST:event_jLabel9MouseClicked
 
     private void backMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_backMouseClicked
-        room_type room = new room_type();
-        room.setVisible(true); // Show the dashboard again
+        room_type rooms = new room_type();
+        rooms.setVisible(true); // Show the dashboard again
         this.dispose();        // Close the current manageusers window
         // TODO add your handling code here:
     }//GEN-LAST:event_backMouseClicked

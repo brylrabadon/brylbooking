@@ -2,9 +2,11 @@ package config;
 
 public class session {
     private static session instance;
-    private int account_id; 
-    private int guestId; 
-    private String fname, lname, username, email, pass, contact, status, role, type;
+    
+    // IDs from the database
+    private int account_id;  // The ID from the 'accounts' table
+
+    private String fname, lname, username, email, pass, contact, status, role;
 
     private session() {}
 
@@ -15,12 +17,10 @@ public class session {
         return instance;
     }
 
-    // Single Universal ID Getter and Setter
+    // --- ID Getters and Setters ---
     public int getAccountId() { return account_id; }
     public void setAccountId(int account_id) { this.account_id = account_id; }
     
-    public int getGuestId() { return guestId; }
-    public void setGuestId(int guestId) { this.guestId = guestId; }
 
     public String getFname() { return fname; }
     public void setFname(String fname) { this.fname = fname; }
@@ -45,7 +45,4 @@ public class session {
 
     public String getRole() { return role; }
     public void setRole(String role) { this.role = role; }
-
-    public String getType() { return type; }
-    public void setType(String type) { this.type = type; }
 }

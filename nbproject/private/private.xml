@@ -3,17 +3,12 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/Personal-PC/Documents/Bryl%20Rabadon%20Program/LOANGUI/BrylBooking/src/dashboardUser/guestprofileEdit/editguestprofile.java</file>
-            <file>file:/C:/Users/Personal-PC/Documents/Bryl%20Rabadon%20Program/LOANGUI/BrylBooking/src/config/config.java</file>
-            <file>file:/C:/Users/Personal-PC/Documents/Bryl%20Rabadon%20Program/LOANGUI/BrylBooking/src/dashboardAdmin/edit.java</file>
-            <file>file:/C:/Users/Personal-PC/Documents/Bryl%20Rabadon%20Program/LOANGUI/BrylBooking/src/config/session.java</file>
-            <file>file:/C:/Users/Personal-PC/Documents/Bryl%20Rabadon%20Program/LOANGUI/BrylBooking/src/dashboardAdmin/dashboardadmin.java</file>
-            <file>file:/C:/Users/Personal-PC/Documents/Bryl%20Rabadon%20Program/LOANGUI/BrylBooking/src/dashboardUser/dashboardguest.java</file>
-            <file>file:/C:/Users/Personal-PC/Documents/Bryl%20Rabadon%20Program/LOANGUI/BrylBooking/src/dashboardUser/guestprofileEdit/guestprofile.java</file>
-            <file>file:/C:/Users/Personal-PC/Documents/Bryl%20Rabadon%20Program/LOANGUI/BrylBooking/src/dashboardAdmin/manageguest.java</file>
-            <file>file:/C:/Users/Personal-PC/Documents/Bryl%20Rabadon%20Program/LOANGUI/BrylBooking/src/dashboardAdmin/adminprofile/adminprofile.java</file>
-            <file>file:/C:/Users/Personal-PC/Documents/Bryl%20Rabadon%20Program/LOANGUI/BrylBooking/src/dashboardAdmin/add.java</file>
-            <file>file:/C:/Users/Personal-PC/Documents/Bryl%20Rabadon%20Program/LOANGUI/BrylBooking/src/dashboardUser/payments.java</file>
+            <file>file:/C:/Users/Personal-PC/Documents/Bryl%20Rabadon%20Program/LOANGUI/BrylBooking/src/dashboardAdmin/room_type/addroomtype.java</file>
+            <file>file:/C:/Users/Personal-PC/Documents/Bryl%20Rabadon%20Program/LOANGUI/BrylBooking/src/dashboardUser/mybookings.java</file>
+            <file>file:/C:/Users/Personal-PC/Documents/Bryl%20Rabadon%20Program/LOANGUI/BrylBooking/src/dashboardAdmin/room_type/room_type.java</file>
+            <file>file:/C:/Users/Personal-PC/Documents/Bryl%20Rabadon%20Program/LOANGUI/BrylBooking/src/dashboardAdmin/manageRooms/addrooms.java</file>
+            <file>file:/C:/Users/Personal-PC/Documents/Bryl%20Rabadon%20Program/LOANGUI/BrylBooking/src/dashboardUser/bookings.java</file>
+            <file>file:/C:/Users/Personal-PC/Documents/Bryl%20Rabadon%20Program/LOANGUI/BrylBooking/src/dashboardAdmin/manageRooms/managerooms.java</file>
         </group>
     </open-files>
 </project-private>

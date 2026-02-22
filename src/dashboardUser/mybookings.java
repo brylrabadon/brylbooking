@@ -31,30 +31,31 @@ public class mybookings extends javax.swing.JFrame {
         initComponents();
         displayMyBookings();
     }
+    
     public void displayMyBookings() {
     try {
         config conf = new config();
         session sess = session.getInstance();
         
-        // Ensure your session is storing the guest_id from the guest table
-        int loggedInAccountId = sess.getAccountId(); 
+        // Use the Account ID from the current session
+        int loggedInId = sess.getAccountId(); 
 
         // UPDATED SQL:
-        // 1. Changed b.accounts_id to b.guest_id to match your table
-        // 2. Removed the unnecessary join to the 'accounts' table
-        String sql = "SELECT b.booking_id AS 'ID', r.room_number AS 'Room Number', " +
+        // We link bookings to rooms to get the Room Number.
+        // We filter by account_id which we just saved in bookings.java.
+        String sql = "SELECT b.bookings_id AS 'ID', r.room_number AS 'Room Number', " +
                      "b.check_in AS 'Check-In', b.check_out AS 'Check-Out', " +
-                     "b.total_price AS 'Total Price', b.booking_status AS 'Status' " +
+                     "b.total_night AS 'Nights', b.total_price AS 'Total Price', " +
+                     "b.booking_status AS 'Status' " +
                      "FROM bookings b " +
                      "JOIN rooms r ON b.room_id = r.room_id " +
-                     "JOIN guest g ON b.guest_id = g.guest_id " +
-                     "WHERE g.guest_id = ?";
+                     "WHERE b.account_id = " + loggedInId;
 
-        // Pass the guest ID from the session to filter the table
-        conf.displayData(sql, bookingsTable, loggedInAccountId);
+        // Populate the JTable
+        conf.displayData(sql, bookingsTable);
 
     } catch (Exception e) {
-        System.out.println("Error loading guest bookings: " + e.getMessage());
+        System.out.println("Error loading bookings: " + e.getMessage());
         javax.swing.JOptionPane.showMessageDialog(null, "Error: " + e.getMessage());
     }
 }
@@ -155,7 +156,7 @@ public class mybookings extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 920, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

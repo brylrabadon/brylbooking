@@ -263,73 +263,51 @@ public bookings() {
 
     private void confirmbookMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_confirmbookMouseClicked
     try {
-        // ✅ Get logged-in user
- 
-       // ✅ Get current session
         session sess = session.getInstance();
-        int guestId = sess.getAccountId();
+        int accId = sess.getAccountId(); // Using AccountId as your unique identifier
 
-        if (guestId == 0) {
-            JOptionPane.showMessageDialog(null, "No user logged in!");
-            return;
-        }
-
-        // ✅ Get selected room
         RoomItem selected = (RoomItem) availroom.getSelectedItem();
-
-        if (selected == null) {
-            JOptionPane.showMessageDialog(null, "Please select a room!");
+        if (selected == null || checkin.getDate() == null || checkout.getDate() == null) {
+            JOptionPane.showMessageDialog(null, "Please complete all fields!");
             return;
         }
 
-        if (checkin.getDate() == null || checkout.getDate() == null) {
-            JOptionPane.showMessageDialog(null, "Please select dates!");
-            return;
-        }
-
-        // ✅ Format dates
-        java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd");
-        String checkInDate = sdf.format(checkin.getDate());
-        String checkOutDate = sdf.format(checkout.getDate());
-
-        int nights = Integer.parseInt(totalnights.getText());
-        double total = Double.parseDouble(totalcost.getText());
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String strIn = sdf.format(checkin.getDate());
+        String strOut = sdf.format(checkout.getDate());
 
         config db = new config();
 
-        // ✅ INSERT booking WITH user_id
-        String sql = "INSERT INTO bookings (guest_id, room_id, check_in, check_out, total_nights, total_price, booking_status) "
-           + "VALUES (?, ?, ?, ?, ?, ?, ?)";
+        // ✅ 1. INSERT using your actual DB column names (account_id, total_night)
+        String sql = "INSERT INTO bookings (account_id, room_id, check_in, check_out, total_night, total_price, booking_status) "
+                   + "VALUES (?, ?, ?, ?, ?, ?, 'Booked')";
 
         int result = db.executeUpdate(sql, 
-        guestId, 
-        selected.getroomId(), // 👈 Without the getter, you can't get the ID here!
-        checkInDate, 
-        checkOutDate, 
-        nights, 
-        total, 
-        "Booked"
-);
+            accId, 
+            selected.getroomId(), 
+            strIn, 
+            strOut, 
+            Integer.parseInt(totalnights.getText()), 
+            Double.parseDouble(totalcost.getText())
+        );
 
         if (result > 0) {
-        JOptionPane.showMessageDialog(null, "Booking Successful! ✅");
+            // ✅ 2. Update Room Status so it "vanishes" from the available list
+            String updateRoom = "UPDATE rooms SET status='Occupied' WHERE room_id=?";
+            db.executeUpdate(updateRoom, selected.getroomId());
 
-    // 1. Update room status to prevent re-booking
-        String updateRoom = "UPDATE rooms SET status=? WHERE room_id=?";
-        db.executeUpdate(updateRoom, "Occupied", selected.getroomId());
+            JOptionPane.showMessageDialog(null, "Booking Successful! ✅");
 
-    // 2. Close this window so it "vanishes"
-        bookings book = new bookings();
-        book.setVisible(true);
-        this.dispose();
-        loadAvailableRooms();
+            // ✅ 3. Refresh and Close
+            new mybookings().setVisible(true); // Open the table view
+            this.dispose(); // Close current booking window
         }
 
     } catch (Exception e) {
-        e.printStackTrace();
-        JOptionPane.showMessageDialog(null, "Error saving booking!");
-    }  
-        // TODO add your handling code here:
+        System.out.println("Booking Error: " + e.getMessage());
+        JOptionPane.showMessageDialog(null, "Error: " + e.getMessage());
+    }
+
     }//GEN-LAST:event_confirmbookMouseClicked
 
     private void ppnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ppnActionPerformed

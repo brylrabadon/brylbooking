@@ -177,52 +177,49 @@ public class register extends javax.swing.JFrame {
 
     private void jLabel4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel4MouseClicked
     // 1. Collect data from UI fields
-    String first = fname.getText();
-    String last = lname.getText();
-    String em = email.getText();
-    String cont = contact.getText();
-    String user = uname.getText();
-    String rawPassword = pass.getText();
+    String first = fname.getText().trim();
+    String last = lname.getText().trim();
+    String em = email.getText().trim();
+    String cont = contact.getText().trim();
+    String user = uname.getText().trim();
+    String rawPassword = pass.getText().trim();
 
     // 2. Validation
     if(first.isEmpty() || last.isEmpty() || em.isEmpty() || cont.isEmpty() || user.isEmpty() || rawPassword.isEmpty()) {
-        javax.swing.JOptionPane.showMessageDialog(this, "All fields are required!");
+        JOptionPane.showMessageDialog(this, "All fields are required!");
         return;
     }
 
     try {
-        String hashedPassword = passwordhashed.hashPassword(rawPassword);
         config conf = new config();
         
-        // 3. STEP 1: Insert into 'guest' table
-        // Columns: first_name, last_name, email, contact, status
-        // Add username and password to the guest insertion
-       String sqlGuest = "INSERT INTO guest (first_name, last_name, email, contact, username, password, status) VALUES (?, ?, ?, ?, ?, ?, ?)";
-       conf.addRecord(sqlGuest, first, last, em, cont, user, hashedPassword, "Active");
+        // 3. Check if Username already exists
+        String checkUser = "SELECT * FROM accounts WHERE username = '" + user + "'";
+        if(conf.getData(checkUser).next()){
+            JOptionPane.showMessageDialog(this, "Username already taken!");
+            return;
+        }
 
-        // 4. STEP 2: Retrieve the ID of the guest we just created
-        // This assumes your config class has a method to fetch a single value or you can use a query
-        int guestId = conf.getLatestID("SELECT guest_id FROM guest ORDER BY guest_id DESC LIMIT 1");
+        // 4. Hash the password
+        String hashedPassword = passwordhashed.hashPassword(rawPassword);
 
-        // 5. STEP 3: Insert into 'accounts' table
-        // Columns: guests_id, username, password, role, account_status
-        String sqlAccount = "INSERT INTO accounts (guest_id, username, password, role, account_status) VALUES (?, ?, ?, ?, ?)";
-        conf.addRecord(sqlAccount, guestId, user, hashedPassword, "Guest", "Active");
-
-        javax.swing.JOptionPane.showMessageDialog(this, "Registration Successful! Account created for Guest.");
+        // 5. Single Insert into 'accounts' table 
+        // Matches columns: first_name, last_name, email, contact, username, password, role, account_status
+        String sqlAccount = "INSERT INTO accounts (first_name, last_name, email, contact, username, password, role, account_status) "
+                          + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         
-        // 6. Navigation
+        conf.addRecord(sqlAccount, first, last, em, cont, user, hashedPassword, "Guest", "Active");
+
+        JOptionPane.showMessageDialog(this, "Registration Successful!");
+        
+        // 6. Redirect to Login
         new login().setVisible(true);
         this.dispose(); 
         
     } catch (Exception e) {
-        System.out.println("Register Error: " + e.getMessage());
-        javax.swing.JOptionPane.showMessageDialog(this, "Database Error: " + e.getMessage());
+        JOptionPane.showMessageDialog(this, "Database Error: " + e.getMessage());
     }
-
-
-   
-
+    
     }//GEN-LAST:event_jLabel4MouseClicked
 
     private void passActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_passActionPerformed

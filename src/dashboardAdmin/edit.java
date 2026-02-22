@@ -18,26 +18,27 @@ public class edit extends javax.swing.JFrame {
      * 
      * 
      */
-    public edit() {
-    initComponents();
-    // This allows the form to open without errors from the main method or dashboard
-}
-    public edit(String id, String f, String l, String em, String cont, String us) { // or public edit()
-    session sess = session.getInstance();// or public dashboarduser()
-    // 1. Security Check FIRST
+    public edit() { 
+    session sess = session.getInstance();
     if (sess.getAccountId() == 0) {
         new main.login().setVisible(true);
         this.dispose();
         return;
     }
     initComponents();
-    guest_id.setText(id);
+    
+}
+
+    public edit(String rl, String f, String l, String em, String cont, String us) {
+      
+    role.setText(rl); // This will now show "Guest" if "Guest" is passed
     fname.setText(f);
     lname.setText(l);
     email.setText(em);
     contact.setText(cont);
     user.setText(us);
-    guest_id.setEditable(false);
+    
+    role.setEditable(false);
     }
 
     /**
@@ -50,7 +51,7 @@ public class edit extends javax.swing.JFrame {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
+        uid = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
@@ -61,7 +62,7 @@ public class edit extends javax.swing.JFrame {
         jLabel9 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         back = new javax.swing.JLabel();
-        guest_id = new javax.swing.JTextField();
+        role = new javax.swing.JTextField();
         fname = new javax.swing.JTextField();
         lname = new javax.swing.JTextField();
         email = new javax.swing.JTextField();
@@ -75,9 +76,9 @@ public class edit extends javax.swing.JFrame {
         jPanel1.setBackground(new java.awt.Color(204, 204, 204));
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 36)); // NOI18N
-        jLabel1.setText("EDIT");
-        jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 10, 90, 60));
+        uid.setFont(new java.awt.Font("Tahoma", 1, 36)); // NOI18N
+        uid.setText("EDIT");
+        jPanel1.add(uid, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 10, 90, 60));
 
         jLabel2.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel2.setText("Username:");
@@ -96,8 +97,8 @@ public class edit extends javax.swing.JFrame {
         jPanel1.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 330, 80, 20));
 
         jLabel6.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel6.setText("Guest ID:");
-        jPanel1.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 80, 70, -1));
+        jLabel6.setText("Role:");
+        jPanel1.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 80, 50, -1));
 
         jLabel7.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel7.setText("Last Name:");
@@ -133,13 +134,13 @@ public class edit extends javax.swing.JFrame {
 
         jPanel1.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 520, 40, 20));
 
-        guest_id.setEditable(false);
-        guest_id.addActionListener(new java.awt.event.ActionListener() {
+        role.setEditable(false);
+        role.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                guest_idActionPerformed(evt);
+                roleActionPerformed(evt);
             }
         });
-        jPanel1.add(guest_id, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 80, 140, 30));
+        jPanel1.add(role, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 80, 140, 30));
         jPanel1.add(fname, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 120, 140, 30));
         jPanel1.add(lname, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 160, 140, 30));
         jPanel1.add(email, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 210, 140, 30));
@@ -169,7 +170,7 @@ public class edit extends javax.swing.JFrame {
     config conf = new config();
 
     // 1. Collect values from your TextFields
-    String id = guest_id.getText();
+    String id = role.getText();
     String first = fname.getText();
     String last = lname.getText();
     String em = email.getText();
@@ -189,23 +190,22 @@ public class edit extends javax.swing.JFrame {
         String hashedPass = passwordhashed.hashPassword(rawPassword); 
 
         // 4. SQL for 'guest' table (Update personal info)
-        String guestSql = "UPDATE guest SET first_name = ?, last_name = ?, email = ?, contact = ?, username = ?, password = ? WHERE guest_id = ?";
+        String accountSql = "UPDATE role SET first_name = ?, last_name = ?, email = ?, contact = ?, username = ?, password = ? WHERE role = ?";
         
         // 5. SQL for 'accounts' table (Sync login credentials)
         // We update based on the username to keep the login table in sync
-        String accountSql = "UPDATE accounts SET password = ?, role = ?, account_status = ? WHERE username = ?";
 
         // 6. Execute Guest Update
-        int guestResult = conf.executeUpdate(guestSql, first, last, em, cont, username, hashedPass, id);
+        int accountResult = conf.executeUpdate(accountSql, first, last, em, cont, username, hashedPass, id);
 
-        if(guestResult > 0) {
+        if(accountResult > 0) {
             // 7. Execute Account Update (Syncing the login credentials)
             conf.executeUpdate(accountSql, hashedPass, "User", "Active", username);
 
             JOptionPane.showMessageDialog(null, "Guest Profile Updated Successfully!");
 
             // Return to the manage users dashboard
-            dashboardAdmin.manageguest manage = new dashboardAdmin.manageguest();
+            dashboardAdmin.manageaccount manage = new dashboardAdmin.manageaccount();
             manage.setVisible(true);
             this.dispose();
         } else {
@@ -219,7 +219,7 @@ public class edit extends javax.swing.JFrame {
     }//GEN-LAST:event_jLabel9MouseClicked
 
     private void backMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_backMouseClicked
-        manageguest manage = new manageguest();
+        manageaccount manage = new manageaccount();
         manage.setVisible(true); // Show the dashboard again
         this.dispose();        // Close the current manageusers window
         // TODO add your handling code here:
@@ -237,9 +237,9 @@ public class edit extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_backMouseExited
 
-    private void guest_idActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guest_idActionPerformed
+    private void roleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_roleActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_guest_idActionPerformed
+    }//GEN-LAST:event_roleActionPerformed
 
     /**
      * @param args the command line arguments
@@ -284,8 +284,6 @@ public class edit extends javax.swing.JFrame {
     public javax.swing.JTextField contact;
     public javax.swing.JTextField email;
     public javax.swing.JTextField fname;
-    public javax.swing.JTextField guest_id;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -299,6 +297,8 @@ public class edit extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel3;
     public javax.swing.JTextField lname;
     public javax.swing.JTextField pass;
+    public javax.swing.JTextField role;
+    private javax.swing.JLabel uid;
     public javax.swing.JTextField user;
     // End of variables declaration//GEN-END:variables
 }

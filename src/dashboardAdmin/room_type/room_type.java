@@ -31,34 +31,9 @@ public class room_type extends javax.swing.JFrame {
         showDataInTable(); // <--- Add this to load data on startup
 }
     public void showDataInTable() {
-    try {
-        java.sql.Connection conn = java.sql.DriverManager.getConnection("jdbc:sqlite:booking.db");
-        String sql = "SELECT * FROM room_type";
-        java.sql.PreparedStatement pstmt = conn.prepareStatement(sql);
-        java.sql.ResultSet rs = pstmt.executeQuery();
-        
-        // Corrected variable name to roomtype_table
-        javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) roomtype_table.getModel();
-        
-        // Set Custom Column Titles
-        String[] headers = {"Type ID", "Room Name", "Capacity", "Price/Night", "Status"};
-        model.setColumnIdentifiers(headers);
-        
-        model.setRowCount(0); 
-
-        while (rs.next()) {
-            model.addRow(new Object[]{
-                rs.getInt("room_type_id"),
-                rs.getString("type_name"),
-                rs.getInt("capacity"),
-                rs.getDouble("price_per_night"),
-                rs.getString("status")
-            });
-        }
-        conn.close();
-    } catch (Exception e) {
-        System.out.println("Room Type Error: " + e.getMessage());
-    }
+    config.config conf = new config.config();
+    // This query is fine, and displayData now handles the closing logic perfectly.
+    conf.displayData("SELECT room_type_id, type_name, capacity, price_per_night, status FROM room_type", roomtype_table);
 }
     /**
      * This method is called from within the constructor to initialize the form.

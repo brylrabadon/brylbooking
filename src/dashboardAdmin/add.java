@@ -55,7 +55,6 @@ public class add extends javax.swing.JFrame {
         jLabel9 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         back = new javax.swing.JLabel();
-        guest_id = new javax.swing.JTextField();
         fname = new javax.swing.JTextField();
         lname = new javax.swing.JTextField();
         email = new javax.swing.JTextField();
@@ -63,6 +62,7 @@ public class add extends javax.swing.JFrame {
         user = new javax.swing.JTextField();
         jLabel10 = new javax.swing.JLabel();
         contact = new javax.swing.JTextField();
+        comborole = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -90,8 +90,8 @@ public class add extends javax.swing.JFrame {
         jPanel1.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 330, 80, 20));
 
         jLabel6.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel6.setText("Guest ID:");
-        jPanel1.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 80, 70, -1));
+        jLabel6.setText("Role:");
+        jPanel1.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 80, 50, -1));
 
         jLabel7.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel7.setText("Last Name:");
@@ -126,14 +126,6 @@ public class add extends javax.swing.JFrame {
         jPanel3.add(back, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 0, -1, -1));
 
         jPanel1.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 520, 40, 20));
-
-        guest_id.setEditable(false);
-        guest_id.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                guest_idActionPerformed(evt);
-            }
-        });
-        jPanel1.add(guest_id, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 80, 140, 30));
         jPanel1.add(fname, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 120, 140, 30));
         jPanel1.add(lname, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 160, 140, 30));
         jPanel1.add(email, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 210, 140, 30));
@@ -144,6 +136,9 @@ public class add extends javax.swing.JFrame {
         jLabel10.setText("First Name:");
         jPanel1.add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 120, 80, -1));
         jPanel1.add(contact, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 250, 140, 30));
+
+        comborole.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Guest", "Admin", "Staff" }));
+        jPanel1.add(comborole, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 80, 140, 30));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -160,9 +155,9 @@ public class add extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void backMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_backMouseClicked
-        manageguest manage = new manageguest();
+        manageaccount manage = new manageaccount();
         manage.setVisible(true); // Show the dashboard again
-        this.dispose();        // Close the current manageguest window
+        this.dispose();        // Close the current manageaccounts window
         // TODO add your handling code here:
     }//GEN-LAST:event_backMouseClicked
 
@@ -178,62 +173,57 @@ public class add extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_backMouseExited
 
-    private void guest_idActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guest_idActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_guest_idActionPerformed
-
     private void jLabel9MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel9MouseClicked
     config conf = new config();
     
-    // 1. Collect values from your TextFields
-    String first = fname.getText();
-    String last = lname.getText();
-    String em = email.getText();
-    String cont = contact.getText();
-    String username = user.getText();
-    String rawPassword = pass.getText();
+    // 1. Collect values from UI components
+    String first = fname.getText().trim();
+    String last = lname.getText().trim();
+    String em = email.getText().trim();
+    String cont = contact.getText().trim();
+    String username = user.getText().trim();
+    String rawPassword = pass.getText().trim();
+    
+    // Get the selected role as a String (e.g., "Guest", "Admin")
+    String selectedRole = comborole.getSelectedItem().toString(); 
 
-    // 2. Validation: Ensure required fields are not empty
+    // 2. Validation: Ensure no fields are empty
     if(first.isEmpty() || last.isEmpty() || em.isEmpty() || username.isEmpty() || rawPassword.isEmpty()) {
         JOptionPane.showMessageDialog(null, "All fields are required!");
         return;
     }
 
     try {
-        // 3. Hash the password before saving for security
-        String hashedPass =  passwordhashed.hashPassword(rawPassword);
+        // 3. Hash the password for security
+        String hashedPass = passwordhashed.hashPassword(rawPassword);
 
-        // 4. SQL for 'guest' table (Personal Information)
-        String guestSql = "INSERT INTO guest (first_name, last_name, email, contact, username, password, status) "
-                        + "VALUES (?, ?, ?, ?, ?, ?, ?)";
+        // 4. SQL Insertion (Saves the string role to match your DB schema)
+        String sql = "INSERT INTO accounts (first_name, last_name, email, contact, username, password, role, account_status) "
+                   + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         
-        // 5. SQL for 'accounts' table (Login Credentials)
-        // Note: 'type' is set to 'User' and 'status' to 'Active' by default
-        String accountSql = "INSERT INTO accounts (username, password, role, account_status) "
-                          + "VALUES (?, ?, ?, ?)";
+        // 5. Execute Insertion
+        int result = conf.executeUpdate(sql, first, last, em, cont, username, hashedPass, selectedRole, "Active");
 
-        // 6. Execute Guest Insertion
-        int guestResult = conf.executeUpdate(guestSql, first, last, em, cont, username, hashedPass, "Active");
-
-        if(guestResult > 0) {
-            // 7. Execute Account Insertion (Syncing the login credentials)
-            conf.executeUpdate(accountSql, username, hashedPass, "User", "Active");
-
-            JOptionPane.showMessageDialog(null, "Guest and Account Registered Successfully!");
+        if(result > 0) {
+            JOptionPane.showMessageDialog(null, "User Registered Successfully!");
             
-            // Return to the manage users dashboard
-            dashboardAdmin.manageguest manage = new dashboardAdmin.manageguest();
+            // --- REFRESH TABLE LOGIC ---
+            // Create the manageaccounts instance and reload its data
+            manageaccount manage = new manageaccount();
+            manage.displayData(); 
+            
+            // Show the updated table and close this 'Add' window
             manage.setVisible(true);
             this.dispose();
         } else {
-            JOptionPane.showMessageDialog(null, "Failed to save Guest data.");
+            JOptionPane.showMessageDialog(null, "Failed to save data.");
         }
 
     } catch (Exception e) {
         JOptionPane.showMessageDialog(null, "Error: " + e.getMessage());
     }
 
-
+    
     }//GEN-LAST:event_jLabel9MouseClicked
 
     /**
@@ -273,10 +263,10 @@ public class add extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel back;
+    private javax.swing.JComboBox<String> comborole;
     private javax.swing.JTextField contact;
     private javax.swing.JTextField email;
     private javax.swing.JTextField fname;
-    private javax.swing.JTextField guest_id;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;

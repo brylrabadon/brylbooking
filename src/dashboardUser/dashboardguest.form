@@ -103,7 +103,7 @@
             <Container class="javax.swing.JPanel" name="jPanel7">
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="30" y="40" width="140" height="30"/>
+                  <AbsoluteConstraints x="30" y="30" width="200" height="40"/>
                 </Constraint>
               </Constraints>
 
@@ -113,11 +113,12 @@
               <SubComponents>
                 <Component class="javax.swing.JLabel" name="jLabel6">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="UserDashboard"/>
+                    <Property name="horizontalAlignment" type="int" value="0"/>
+                    <Property name="text" type="java.lang.String" value="Guest Dashboard"/>
                   </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                      <AbsoluteConstraints x="40" y="10" width="90" height="-1"/>
+                      <AbsoluteConstraints x="0" y="0" width="200" height="40"/>
                     </Constraint>
                   </Constraints>
                 </Component>
@@ -126,7 +127,7 @@
             <Container class="javax.swing.JPanel" name="jPanel4">
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="30" y="90" width="140" height="30"/>
+                  <AbsoluteConstraints x="30" y="80" width="200" height="40"/>
                 </Constraint>
               </Constraints>
 
@@ -136,6 +137,7 @@
               <SubComponents>
                 <Component class="javax.swing.JLabel" name="jLabel3">
                   <Properties>
+                    <Property name="horizontalAlignment" type="int" value="0"/>
                     <Property name="text" type="java.lang.String" value="Book"/>
                   </Properties>
                   <Events>
@@ -143,7 +145,7 @@
                   </Events>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                      <AbsoluteConstraints x="50" y="10" width="-1" height="-1"/>
+                      <AbsoluteConstraints x="0" y="0" width="200" height="40"/>
                     </Constraint>
                   </Constraints>
                 </Component>
@@ -152,7 +154,7 @@
             <Container class="javax.swing.JPanel" name="payments">
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="30" y="190" width="140" height="30"/>
+                  <AbsoluteConstraints x="30" y="180" width="200" height="40"/>
                 </Constraint>
               </Constraints>
 
@@ -162,6 +164,7 @@
               <SubComponents>
                 <Component class="javax.swing.JLabel" name="pay">
                   <Properties>
+                    <Property name="horizontalAlignment" type="int" value="0"/>
                     <Property name="text" type="java.lang.String" value="Payments"/>
                   </Properties>
                   <Events>
@@ -170,7 +173,7 @@
                   </Events>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                      <AbsoluteConstraints x="50" y="0" width="-1" height="30"/>
+                      <AbsoluteConstraints x="0" y="0" width="200" height="40"/>
                     </Constraint>
                   </Constraints>
                 </Component>
@@ -179,7 +182,7 @@
             <Container class="javax.swing.JPanel" name="jPanel3">
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="30" y="250" width="140" height="30"/>
+                  <AbsoluteConstraints x="30" y="230" width="200" height="40"/>
                 </Constraint>
               </Constraints>
 
@@ -189,6 +192,7 @@
               <SubComponents>
                 <Component class="javax.swing.JLabel" name="user_profile">
                   <Properties>
+                    <Property name="horizontalAlignment" type="int" value="0"/>
                     <Property name="text" type="java.lang.String" value="User Profile"/>
                   </Properties>
                   <Events>
@@ -198,7 +202,7 @@
                   </Events>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                      <AbsoluteConstraints x="40" y="10" width="70" height="10"/>
+                      <AbsoluteConstraints x="0" y="0" width="200" height="40"/>
                     </Constraint>
                   </Constraints>
                 </Component>
@@ -207,7 +211,7 @@
             <Container class="javax.swing.JPanel" name="jPanel6">
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="30" y="300" width="140" height="30"/>
+                  <AbsoluteConstraints x="30" y="280" width="200" height="40"/>
                 </Constraint>
               </Constraints>
 
@@ -217,6 +221,7 @@
               <SubComponents>
                 <Component class="javax.swing.JLabel" name="logout">
                   <Properties>
+                    <Property name="horizontalAlignment" type="int" value="0"/>
                     <Property name="text" type="java.lang.String" value="LOG OUT"/>
                   </Properties>
                   <Events>
@@ -224,7 +229,7 @@
                   </Events>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                      <AbsoluteConstraints x="50" y="10" width="-1" height="-1"/>
+                      <AbsoluteConstraints x="0" y="0" width="200" height="40"/>
                     </Constraint>
                   </Constraints>
                 </Component>
@@ -233,7 +238,7 @@
             <Container class="javax.swing.JPanel" name="jPanel9">
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="30" y="140" width="140" height="30"/>
+                  <AbsoluteConstraints x="30" y="130" width="200" height="40"/>
                 </Constraint>
               </Constraints>
 
@@ -243,6 +248,7 @@
               <SubComponents>
                 <Component class="javax.swing.JLabel" name="books">
                   <Properties>
+                    <Property name="horizontalAlignment" type="int" value="0"/>
                     <Property name="text" type="java.lang.String" value="MyBookings"/>
                   </Properties>
                   <Events>
@@ -250,7 +256,7 @@
                   </Events>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                      <AbsoluteConstraints x="40" y="0" width="-1" height="30"/>
+                      <AbsoluteConstraints x="0" y="0" width="200" height="40"/>
                     </Constraint>
                   </Constraints>
                 </Component>
@@ -258,12 +264,12 @@
             </Container>
           </SubComponents>
         </Container>
-        <Component class="javax.swing.JLabel" name="welcome_user">
+        <Component class="javax.swing.JLabel" name="welcome_guest">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="Tahoma" size="18" style="1"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="Welcome, username"/>
+            <Property name="text" type="java.lang.String" value="Welcome, guestname"/>
           </Properties>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
