@@ -19,8 +19,10 @@ public class edit extends javax.swing.JFrame {
      * 
      */
     public edit() { 
-    session sess = session.getInstance();
+    session sess = session.getInstance();// or public dashboarduser()
+    // 1. Security Check FIRST
     if (sess.getAccountId() == 0) {
+        javax.swing.JOptionPane.showMessageDialog(null, "Please Login First!");
         new main.login().setVisible(true);
         this.dispose();
         return;

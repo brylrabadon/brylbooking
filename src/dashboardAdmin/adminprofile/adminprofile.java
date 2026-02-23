@@ -20,14 +20,13 @@ public class adminprofile extends javax.swing.JFrame {
      * Creates new form adminprofile
      */
     public adminprofile() {
-        
-        session sess = session.getInstance();// or public dashboarduser()
+     session sess = session.getInstance();// or public dashboarduser()
     // 1. Security Check FIRST
     if (sess.getAccountId() == 0) {
-        main.login loginForm = new main.login();
-        loginForm.setVisible(true);
-        this.dispose(); 
-        return; 
+        javax.swing.JOptionPane.showMessageDialog(null, "Please Login First!");
+        new main.login().setVisible(true);
+        this.dispose();
+        return;
     }
             initComponents();
             loadAdminData();

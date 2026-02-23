@@ -17,6 +17,15 @@ public class editguestprofile extends javax.swing.JFrame {
      * Creates new form editguestprofile
      */
     public editguestprofile() {
+     session sess = session.getInstance();
+
+    if (sess.getAccountId() == 0) {
+    javax.swing.JOptionPane.showMessageDialog(null, "Required to Log in!");
+        main.login loginForm = new main.login();
+        loginForm.setVisible(true);
+        this.dispose(); 
+        return;
+    }
     initComponents();
     displayData(); // Add this line to load the info
 }

@@ -17,10 +17,13 @@ public class editadminprofile extends javax.swing.JFrame {
      * Creates new form editadminprofile
      */
     public editadminprofile() {
-        session sess = session.getInstance();// or public dashboarduser()
+    session sess = session.getInstance();// or public dashboarduser()
     // 1. Security Check FIRST
     if (sess.getAccountId() == 0) {
-    
+        javax.swing.JOptionPane.showMessageDialog(null, "Please Login First!");
+        new main.login().setVisible(true);
+        this.dispose();
+        return;
     }
     initComponents();
     displayData();
