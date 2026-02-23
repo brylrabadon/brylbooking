@@ -268,7 +268,7 @@ public void displayData() {
             sess.setUsername(userUname);
             sess.setPass(rawPass);
 
-            new dashboardUser.guestprofileEdit.guestprofile().setVisible(true);
+            new dashboardUser.dashboardguest().setVisible(true);
             this.dispose();
         }
     } catch (Exception e) {

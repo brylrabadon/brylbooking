@@ -270,7 +270,8 @@ public class editstaffprofile extends javax.swing.JFrame {
             sess.setPass(rawPass);
 
             // Redirect back to the Staff Dashboard
-            new dashboardStaff.staffprofileEdit.staffprofile().setVisible(true); 
+            dashboardStaff.dashboardstaff dash = new dashboardStaff.dashboardstaff();
+            dash.setVisible(true); 
             this.dispose();
         }
     } catch (Exception e) {

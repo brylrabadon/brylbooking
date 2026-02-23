@@ -242,7 +242,9 @@ public class editadminprofile extends javax.swing.JFrame {
         sess.setStatus(status);
         
         // Return to previous screen
-        backMouseClicked(null); 
+        dashboardAdmin.dashboardadmin ads = new dashboardAdmin.dashboardadmin();
+        ads.setVisible(true); 
+        this.dispose();
         
     } else {
         JOptionPane.showMessageDialog(null, "Update Failed! Check your database connection.");
