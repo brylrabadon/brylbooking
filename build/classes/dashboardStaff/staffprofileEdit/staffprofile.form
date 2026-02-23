@@ -284,6 +284,7 @@
           <SubComponents>
             <Component class="javax.swing.JLabel" name="back">
               <Properties>
+                <Property name="horizontalAlignment" type="int" value="0"/>
                 <Property name="text" type="java.lang.String" value="Back"/>
               </Properties>
               <Events>
@@ -293,7 +294,7 @@
               </Events>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="10" y="0" width="30" height="-1"/>
+                  <AbsoluteConstraints x="0" y="0" width="40" height="20"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -315,6 +316,7 @@
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Tahoma" size="12" style="1"/>
                 </Property>
+                <Property name="horizontalAlignment" type="int" value="0"/>
                 <Property name="text" type="java.lang.String" value="EDIT"/>
               </Properties>
               <Events>
@@ -322,7 +324,7 @@
               </Events>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="30" y="10" width="40" height="-1"/>
+                  <AbsoluteConstraints x="0" y="0" width="90" height="30"/>
                 </Constraint>
               </Constraints>
             </Component>

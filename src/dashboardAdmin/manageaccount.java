@@ -109,6 +109,7 @@ public void displayData(String sql) {
 
         jPanel3.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
+        back.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         back.setText("Back");
         back.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -121,7 +122,7 @@ public void displayData(String sql) {
                 backMouseExited(evt);
             }
         });
-        jPanel3.add(back, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 0, 30, -1));
+        jPanel3.add(back, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 40, 20));
 
         jPanel2.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 10, -1, 20));
 
@@ -129,25 +130,27 @@ public void displayData(String sql) {
 
         jPanel11.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
+        add.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         add.setText("Add");
         add.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 addMouseClicked(evt);
             }
         });
-        jPanel11.add(add, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 10, 40, 20));
+        jPanel11.add(add, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 70, 40));
 
         jPanel1.add(jPanel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 110, 70, 40));
 
         edit.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
+        jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel4.setText("Edit ");
         jLabel4.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jLabel4MouseClicked(evt);
             }
         });
-        edit.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 40, 20));
+        edit.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 70, 40));
 
         jPanel1.add(edit, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 110, 70, 40));
 
@@ -168,25 +171,27 @@ public void displayData(String sql) {
 
         jPanel4.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
+        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel2.setText("Delete");
         jLabel2.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jLabel2MouseClicked(evt);
             }
         });
-        jPanel4.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 10, -1, -1));
+        jPanel4.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 70, 40));
 
         jPanel1.add(jPanel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 110, 70, 40));
 
         jPanel5.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
+        search.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         search.setText("Search");
         search.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 searchMouseClicked(evt);
             }
         });
-        jPanel5.add(search, new org.netbeans.lib.awtextra.AbsoluteConstraints(32, 11, -1, -1));
+        jPanel5.add(search, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 100, 30));
 
         jPanel1.add(jPanel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(809, 120, 100, 30));
 

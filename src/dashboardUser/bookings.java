@@ -194,6 +194,7 @@ public bookings() {
         jPanel11.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         cancel.setForeground(new java.awt.Color(255, 255, 255));
+        cancel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         cancel.setText("Cancel");
         cancel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -206,7 +207,7 @@ public bookings() {
                 cancelMouseExited(evt);
             }
         });
-        jPanel11.add(cancel, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 4, 40, 20));
+        jPanel11.add(cancel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 80, 30));
 
         jPanel9.add(jPanel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 340, 80, 30));
 
@@ -214,13 +215,14 @@ public bookings() {
         jPanel12.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         confirmbook.setForeground(new java.awt.Color(255, 255, 255));
+        confirmbook.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         confirmbook.setText("Confirm Booking");
         confirmbook.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 confirmbookMouseClicked(evt);
             }
         });
-        jPanel12.add(confirmbook, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 10, 80, 20));
+        jPanel12.add(confirmbook, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 120, 40));
 
         jPanel9.add(jPanel12, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 330, 120, 40));
 

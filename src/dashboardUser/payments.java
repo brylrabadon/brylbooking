@@ -42,82 +42,91 @@ public class payments extends javax.swing.JFrame {
     }
 
     private void processPayment(String bookingId, String method, String amountPaid) {
-        String insertPayment = "INSERT INTO payments (booking_id, method, amount, status, date) VALUES (?, ?, ?, ?, datetime('now'))";
-        String updateBooking = "UPDATE bookings SET booking_status = 'Paid' WHERE booking_id = ?";
+    // FIX: Changed 'booking_id' to 'bookings_id' to match your payments table screenshot
+    String insertPayment = "INSERT INTO payments (bookings_id, amount, payment_method, payment_status, payment_date) "
+                         + "VALUES (?, ?, ?, ?, datetime('now'))";
+        String updateBooking = "UPDATE bookings SET booking_status = 'Paid' WHERE bookings_id = ?";
 
-        // Use the connection from your config instance
-        try (Connection con = conf.connectDB()) {
-            con.setAutoCommit(false);
+    try (Connection con = conf.connectDB()) {
+        con.setAutoCommit(false); // Transactions keep your data safe
 
-            try (PreparedStatement ps1 = con.prepareStatement(insertPayment)) {
-                ps1.setString(1, bookingId);
-                ps1.setString(2, method);
-                ps1.setString(3, amountPaid);
-                ps1.setString(4, "Completed");
-                ps1.executeUpdate();
-            }
-
-            try (PreparedStatement ps2 = con.prepareStatement(updateBooking)) {
-                ps2.setString(1, bookingId);
-                ps2.executeUpdate();
-            }
-
-            con.commit();
-            JOptionPane.showMessageDialog(this, "Payment Successful!");
-
-            new dashboardguest().setVisible(true);
-            this.dispose(); 
-
-        } catch (Exception e) {
-            System.out.println("Payment Error: " + e.getMessage());
-            JOptionPane.showMessageDialog(this, "Payment Failed!");
+        // This line (ps1) was causing your error because of the name mismatch
+        try (PreparedStatement ps1 = con.prepareStatement(insertPayment)) {
+            ps1.setString(1, bookingId);
+            ps1.setString(2, amountPaid);
+            ps1.setString(3, method);
+            ps1.setString(4, "Paid"); 
+            ps1.executeUpdate();
         }
+
+        try (PreparedStatement ps2 = con.prepareStatement(updateBooking)) {
+            ps2.setString(1, bookingId);
+            ps2.executeUpdate();
+        }
+
+        con.commit(); 
+        JOptionPane.showMessageDialog(this, "Payment Successful!");
+
+        new dashboardguest().setVisible(true);
+        this.dispose(); 
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(this, "Payment Failed! Error: " + e.getMessage());
     }
+}
     
     private void loadBookingIDs() {
-        String sql = "SELECT booking_id FROM bookings WHERE booking_status != 'Paid'";
-        
-        // Use the config instance
-        try (Connection con = conf.connectDB();
-             PreparedStatement ps = con.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+    session sess = session.getInstance();
+    int currentUserId = sess.getAccountId();
 
-            bookingID.removeAllItems();
-            while (rs.next()) {
-                bookingID.addItem(rs.getString("booking_id"));
-            }
+    // Changed 'booking_id' to 'bookings_id' to match your bookings table schema
+    String sql = "SELECT bookings_id FROM bookings WHERE account_id = ? AND booking_status != 'Paid'";
+    
+    try (Connection con = conf.connectDB();
+         PreparedStatement ps = con.prepareStatement(sql)) {
 
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Error loading IDs: " + e.getMessage());
+        ps.setInt(1, currentUserId);
+        ResultSet rs = ps.executeQuery();
+
+        bookingID.removeAllItems();
+        while (rs.next()) {
+            // Updated to get 'bookings_id'
+            bookingID.addItem(rs.getString("bookings_id"));
         }
+
+    } catch (Exception e) {
+        e.printStackTrace(); 
+        JOptionPane.showMessageDialog(this, "Error loading IDs: " + e.getMessage());
     }
+}
 
     private void loadBookingDetails(String bookingId) {
-        // Corrected SQL: Standardize table names and check for existing columns
-        String sql = "SELECT b.booking_id, b.check_in, b.check_out, b.total_nights, b.total_price, b.room_id " +
-                     "FROM bookings b WHERE b.booking_id = ?";
+    // Corrected column names: bookings_id and total_night
+    String sql = "SELECT bookings_id, check_in, check_out, total_night, total_price, room_id " +
+                 "FROM bookings WHERE bookings_id = ?";
 
-        try (Connection con = conf.connectDB();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+    try (Connection con = conf.connectDB();
+         PreparedStatement ps = con.prepareStatement(sql)) {
 
-            ps.setString(1, bookingId);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    roomNo.setText(rs.getString("room_id"));
-                    checkin.setText(rs.getString("check_in"));
-                    checkout.setText(rs.getString("check_out"));
-                    totaln.setText(rs.getString("total_nights"));
-                    
-                    String price = rs.getString("total_price");
-                    ppn.setText(price);
-                    totalamount.setText(price);
-                    amount.setText(price); // Default payment amount to total price
-                }
+        ps.setString(1, bookingId);
+        try (ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                roomNo.setText(rs.getString("room_id"));
+                checkin.setText(rs.getString("check_in"));
+                checkout.setText(rs.getString("check_out"));
+                totaln.setText(rs.getString("total_night")); // Corrected singular name
+                
+                String price = rs.getString("total_price");
+                ppn.setText(price);
+                totalamount.setText(price);
+                amount.setText(price); 
             }
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Error loading details: " + e.getMessage());
         }
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, "Error loading details: " + e.getMessage());
     }
+}
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -197,8 +206,9 @@ public class payments extends javax.swing.JFrame {
         jPanel3.setBackground(new java.awt.Color(153, 153, 153));
         jPanel3.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
+        jLabel10.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel10.setText("BOOKING SUMMARY");
-        jPanel3.add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 0, 140, 40));
+        jPanel3.add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 140, 40));
 
         jPanel1.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 120, 140, 40));
 
@@ -224,13 +234,14 @@ public class payments extends javax.swing.JFrame {
         jPanel13.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         confirmbook.setForeground(new java.awt.Color(255, 255, 255));
+        confirmbook.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         confirmbook.setText("Confirm Booking");
         confirmbook.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 confirmbookMouseClicked(evt);
             }
         });
-        jPanel13.add(confirmbook, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 10, 100, 20));
+        jPanel13.add(confirmbook, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 120, 40));
 
         jPanel4.add(jPanel13, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 190, 120, 40));
 
@@ -258,6 +269,7 @@ public class payments extends javax.swing.JFrame {
         jPanel11.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         cancel.setForeground(new java.awt.Color(255, 255, 255));
+        cancel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         cancel.setText("Cancel");
         cancel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -270,7 +282,7 @@ public class payments extends javax.swing.JFrame {
                 cancelMouseExited(evt);
             }
         });
-        jPanel11.add(cancel, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 4, 40, 20));
+        jPanel11.add(cancel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 80, 40));
 
         jPanel4.add(jPanel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 190, 80, 40));
 
@@ -342,9 +354,14 @@ public class payments extends javax.swing.JFrame {
     }//GEN-LAST:event_cancel1MouseExited
 
     private void confirmbookMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_confirmbookMouseClicked
-
     if (bookingID.getSelectedItem() == null) {
         JOptionPane.showMessageDialog(this, "Select a booking first!");
+        return;
+    }
+
+    // Safety check: Make sure amount isn't empty
+    if (amount.getText().trim().isEmpty()) {
+        JOptionPane.showMessageDialog(this, "Please enter an amount!");
         return;
     }
 
@@ -352,10 +369,10 @@ public class payments extends javax.swing.JFrame {
     String method = paymentmethods.getSelectedItem().toString();
     String amountPaid = amount.getText();
 
+    // Call the fixed processPayment method below
     processPayment(bookingId, method, amountPaid);
-   
-            
-        // TODO add your handling code here:
+
+   // TODO add your handling code here:
     }//GEN-LAST:event_confirmbookMouseClicked
 
     private void bookingIDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bookingIDActionPerformed
