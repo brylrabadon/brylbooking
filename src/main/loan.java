@@ -135,8 +135,6 @@ public class loan extends javax.swing.JFrame {
         // Use 'loginForm' or 'login' depending on which class you want to open
         login log = new login(); 
         log.setVisible(true);
-        
-        // 3. This WILL kill the loading screen now
         lo.dispose(); 
 
     } catch (Exception e) {
