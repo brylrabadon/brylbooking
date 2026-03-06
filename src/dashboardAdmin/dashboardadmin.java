@@ -5,9 +5,6 @@ import dashboardAdmin.room_type.room_type;
 import dashboardAdmin.manageRooms.managerooms;
 import config.config;
 import config.session;
-import main.login;
-import javax.swing.JOptionPane;
-
 public class dashboardadmin extends javax.swing.JFrame {
 
     public dashboardadmin() { // Remove 'int id' from here
@@ -24,9 +21,47 @@ public class dashboardadmin extends javax.swing.JFrame {
 
     // 2. Build the UI only if logged in
     initComponents();
+    displayData();
     admin_user.setText("Welcome, " + sess.getUsername());
 }
-   
+    public void displayData() {
+    config conf = new config(); 
+    try {
+        java.sql.ResultSet rs;
+
+        // 1. Get Total Bookings from 'bookings' table
+        rs = conf.getData("SELECT COUNT(*) FROM bookings");
+        if(rs.next()){
+            jLabel4.setText("Total Bookings: " + rs.getInt(1));
+        }
+
+        // 2. Get Total Revenue using 'total_price' from 'bookings' table
+        // Based on your database image, price is stored in the bookings table
+        rs = conf.getData("SELECT SUM(total_price) FROM bookings");
+        if(rs.next()){
+            double revenue = rs.getDouble(1);
+            jLabel6.setText("Revenue: ₱" + String.format("%.2f", revenue));
+        }
+
+        // 3. Get Active Status (Guests who have 'Booked' but not 'Cancelled')
+        // Based on your database constraint: 'Booked' or 'Cancelled'
+        rs = conf.getData("SELECT COUNT(*) FROM bookings WHERE booking_status = 'Booked'");
+        if(rs.next()){
+            jLabel8.setText("Active: " + rs.getInt(1));
+        }
+
+        // 4. Populate the JTable with specific columns from your schema
+        // Joins with accounts might be needed later for guest names, 
+        // but for now, we'll use account_id as requested
+        String query = "SELECT bookings_id AS 'Booking ID', account_id AS 'Guest ID', "
+                     + "check_in AS 'Check-In', booking_status AS 'Status' FROM bookings";
+        rs = conf.getData(query);
+        jTable1.setModel(net.proteanit.sql.DbUtils.resultSetToTableModel(rs));
+
+    } catch (java.sql.SQLException e) {
+        System.out.println("Error fetching dashboard data: " + e.getMessage());
+    }
+}
 
     // Method to fetch data and display it in a JTable
 
@@ -49,20 +84,25 @@ public class dashboardadmin extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         jPanel6 = new javax.swing.JPanel();
         logout = new javax.swing.JLabel();
-        jPanel8 = new javax.swing.JPanel();
-        jLabel7 = new javax.swing.JLabel();
         jPanel11 = new javax.swing.JPanel();
         jLabel10 = new javax.swing.JLabel();
         jPanel12 = new javax.swing.JPanel();
         admin_user = new javax.swing.JLabel();
+        panelStats = new javax.swing.JPanel();
+        jPanel14 = new javax.swing.JPanel();
+        jLabel4 = new javax.swing.JLabel();
+        jPanel5 = new javax.swing.JPanel();
+        jLabel6 = new javax.swing.JLabel();
+        jPanel9 = new javax.swing.JPanel();
+        jLabel8 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTable1 = new javax.swing.JTable();
         jPanel10 = new javax.swing.JPanel();
         manageusers = new javax.swing.JLabel();
         jPanel13 = new javax.swing.JPanel();
         jLabel11 = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
-        jPanel7 = new javax.swing.JPanel();
-        jLabel5 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -89,7 +129,7 @@ public class dashboardadmin extends javax.swing.JFrame {
         });
         jPanel3.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 200, 40));
 
-        jPanel1.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 420, 200, 40));
+        jPanel1.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 320, 200, 40));
 
         jPanel6.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
@@ -108,15 +148,7 @@ public class dashboardadmin extends javax.swing.JFrame {
         });
         jPanel6.add(logout, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 200, 40));
 
-        jPanel1.add(jPanel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 470, 200, 40));
-
-        jPanel8.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        jLabel7.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel7.setText("View Bookings");
-        jPanel8.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 200, 40));
-
-        jPanel1.add(jPanel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 320, 200, 40));
+        jPanel1.add(jPanel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 370, 200, 40));
 
         jPanel11.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
@@ -136,7 +168,92 @@ public class dashboardadmin extends javax.swing.JFrame {
 
         admin_user.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         admin_user.setText("Welcome, adminuser");
-        jPanel12.add(admin_user, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 30, 200, 30));
+        jPanel12.add(admin_user, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 200, 30));
+
+        panelStats.setBackground(new java.awt.Color(153, 153, 153));
+
+        jLabel4.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
+        jLabel4.setText("Total Bookings");
+
+        javax.swing.GroupLayout jPanel14Layout = new javax.swing.GroupLayout(jPanel14);
+        jPanel14.setLayout(jPanel14Layout);
+        jPanel14Layout.setHorizontalGroup(
+            jPanel14Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel14Layout.createSequentialGroup()
+                .addGap(25, 25, 25)
+                .addComponent(jLabel4)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel14Layout.setVerticalGroup(
+            jPanel14Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel14Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel4)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        panelStats.add(jPanel14);
+
+        jLabel6.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
+        jLabel6.setText("Revenue");
+
+        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
+        jPanel5.setLayout(jPanel5Layout);
+        jPanel5Layout.setHorizontalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addGap(26, 26, 26)
+                .addComponent(jLabel6)
+                .addContainerGap(27, Short.MAX_VALUE))
+        );
+        jPanel5Layout.setVerticalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel6)
+                .addContainerGap())
+        );
+
+        panelStats.add(jPanel5);
+
+        jLabel8.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
+        jLabel8.setText("Active Status");
+
+        javax.swing.GroupLayout jPanel9Layout = new javax.swing.GroupLayout(jPanel9);
+        jPanel9.setLayout(jPanel9Layout);
+        jPanel9Layout.setHorizontalGroup(
+            jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel9Layout.createSequentialGroup()
+                .addGap(25, 25, 25)
+                .addComponent(jLabel8)
+                .addContainerGap(24, Short.MAX_VALUE))
+        );
+        jPanel9Layout.setVerticalGroup(
+            jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel9Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel8)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        panelStats.add(jPanel9);
+
+        jPanel12.add(panelStats, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 40, 690, 110));
+
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null}
+            },
+            new String [] {
+                "Booking ID", "Guest Name", "Check-In"
+            }
+        ));
+        jScrollPane1.setViewportView(jTable1);
+
+        jPanel12.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 150, 690, 310));
 
         jPanel1.add(jPanel12, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 100, 690, 460));
 
@@ -179,14 +296,6 @@ public class dashboardadmin extends javax.swing.JFrame {
         jPanel4.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 200, 40));
 
         jPanel1.add(jPanel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 120, 200, 40));
-
-        jPanel7.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel5.setText("View Payments");
-        jPanel7.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 200, 40));
-
-        jPanel1.add(jPanel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 370, 200, 40));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -289,21 +398,26 @@ public static void main(String args[]) {
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel10;
     private javax.swing.JPanel jPanel11;
     private javax.swing.JPanel jPanel12;
     private javax.swing.JPanel jPanel13;
+    private javax.swing.JPanel jPanel14;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
-    private javax.swing.JPanel jPanel7;
-    private javax.swing.JPanel jPanel8;
+    private javax.swing.JPanel jPanel9;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable jTable1;
     private javax.swing.JLabel logout;
     private javax.swing.JLabel manageusers;
+    private javax.swing.JPanel panelStats;
     // End of variables declaration//GEN-END:variables
     
 }

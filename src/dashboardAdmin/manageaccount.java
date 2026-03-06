@@ -38,21 +38,17 @@ public class manageaccount extends javax.swing.JFrame {
 public void displayData() {
     try {
         config conf = new config();
-        
-        // Removed first_name and last_name from the SELECT statement
-        String sql = "SELECT account_id AS 'ID', email AS 'Email', "
+        // Added first_name and last_name back into the query
+        String sql = "SELECT account_id AS 'ID', first_name AS 'First Name', "
+                   + "last_name AS 'Last Name', email AS 'Email', "
                    + "contact AS 'Contact', username AS 'Username', "
-                   + "role AS 'Role', account_status AS 'Status' "
-                   + "FROM accounts";
+                   + "role AS 'Role' FROM accounts";
 
         java.sql.ResultSet rs = conf.getData(sql);
-        
-        // The table will now only show ID, Email, Contact, Username, Role, and Status
         accounts_table.setModel(DbUtils.resultSetToTableModel(rs));
-        
         rs.close();
     } catch (Exception e) {
-        javax.swing.JOptionPane.showMessageDialog(null, "Error fetching data: " + e.getMessage());
+        JOptionPane.showMessageDialog(null, "Error: " + e.getMessage());
     }
 }
 
@@ -244,50 +240,31 @@ public void displayData(String sql) {
     }//GEN-LAST:event_addMouseClicked
 
     private void jLabel4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel4MouseClicked
-       int rowIndex = accounts_table.getSelectedRow();
+    int rowIndex = accounts_table.getSelectedRow(); 
 
-        if (rowIndex < 0) {
-            JOptionPane.showMessageDialog(null, "Please select an item to edit!");
-        } else {
-            try {
-                config conf = new config();
-                TableModel model = accounts_table.getModel();
-                
-                // 1. Get the ID from the selected row (Column 0)
-                String id = model.getValueAt(rowIndex, 0).toString();
-                
-                // 2. Query the database to get full details for that ID
-                java.sql.ResultSet rs = conf.getData("SELECT * FROM accounts WHERE account_id = '" + id + "'");
-                
-                if(rs.next()) {
-                    edit ed = new edit(); 
-                    
-                    // --- IMPLEMENTED LOGIC START ---
-                    int roleId = rs.getInt("role");
-                    if (roleId == 0) {
-                        ed.role.setText("Guest");
-                    } else if (roleId == 1) {
-                        ed.role.setText("Admin");
-                    } else {
-                        ed.role.setText("Staff");
-                    }
-                    // --- IMPLEMENTED LOGIC END ---
-
-                    // Pass the rest of the data to the edit form fields
-                    ed.fname.setText(rs.getString("first_name"));
-                    ed.lname.setText(rs.getString("last_name"));
-                    ed.email.setText(rs.getString("email"));
-                    ed.contact.setText(rs.getString("contact"));
-                    ed.user.setText(rs.getString("username"));
-                    ed.pass.setText(""); // Keep password blank for security
-                    
-                    ed.setVisible(true);
-                    this.dispose();
-                }
-            } catch (Exception e) {
-                System.out.println("Error: " + e.getMessage());
-            }
+    if (rowIndex < 0) {
+        JOptionPane.showMessageDialog(null, "Please select an item to edit!");
+    } else {
+        try {
+            // Get ID and all strings based on the NEW query order above
+            int id = Integer.parseInt(accounts_table.getValueAt(rowIndex, 0).toString());
+            String fn = accounts_table.getValueAt(rowIndex, 1).toString(); // First Name
+            String ln = accounts_table.getValueAt(rowIndex, 2).toString(); // Last Name
+            String em = accounts_table.getValueAt(rowIndex, 3).toString(); // Email
+            String co = accounts_table.getValueAt(rowIndex, 4).toString(); // Contact
+            String us = accounts_table.getValueAt(rowIndex, 5).toString(); // Username
+            String rl = accounts_table.getValueAt(rowIndex, 6).toString(); // Role
+            
+            // Pass all values to the edit constructor
+            edit ed = new edit(id, rl, fn, ln, em, co, us); 
+            ed.setVisible(true);
+            this.dispose();
+            
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Selection Error: " + e.getMessage());
         }
+    }
+
     
     }//GEN-LAST:event_jLabel4MouseClicked
 

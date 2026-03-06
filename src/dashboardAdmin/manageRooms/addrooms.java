@@ -7,24 +7,34 @@ import javax.swing.*;
 public class addrooms extends javax.swing.JFrame {
 
     public addrooms() {
-        
         session sess = session.getInstance();
 
-    // 1. Security Check FIRST
-    if (sess.getAccountId() == 0) {
-        javax.swing.JOptionPane.showMessageDialog(null, "Required to Log in!");
-        main.login loginForm = new main.login();
-        loginForm.setVisible(true);
-        this.dispose(); 
-        return; 
-    }
+        // 1. Security Check
+        if (sess.getAccountId() == 0) {
+            javax.swing.JOptionPane.showMessageDialog(null, "Required to Log in!");
+            main.login loginForm = new main.login();
+            loginForm.setVisible(true);
+            this.dispose(); 
+            return; 
+        }
+        
         initComponents();
-        comboRoomTypeName.removeAllItems();
-        comboRoomTypeName.addItem("-- Select Type --");
-    
-    // Set fixed statuses
+        
+        // 2. Setup the clickable Room Type Field
+        rtn.setEditable(false); 
+        rtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        rtn.setToolTipText("Click to select Room Type");
+
+        // 3. Set fixed statuses
         comboRoomStat.setModel(new DefaultComboBoxModel<>(new String[] { "Available", "Occupied", "Maintenance" }));
     }
+    
+    // PUBLIC METHOD: Called by roomtypelookup to pass data back
+    // PUBLIC METHOD: Called by roomtypelookup to pass data back
+public void setRoomTypeData(String typeName, String price) {
+    rtn.setText(typeName);           // Sets the Room Type Name field
+    roompernight.setText(price);     // Sets the Room Per Night field
+}
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -42,7 +52,6 @@ public class addrooms extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         status = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
-        jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jLabel9 = new javax.swing.JLabel();
@@ -50,12 +59,13 @@ public class addrooms extends javax.swing.JFrame {
         back = new javax.swing.JLabel();
         roomid = new javax.swing.JTextField();
         floor = new javax.swing.JTextField();
-        roompr = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         desc = new javax.swing.JTextArea();
-        comboRoomTypeName = new javax.swing.JComboBox<>();
-        comboRoomStat = new javax.swing.JComboBox<>();
         roomnum1 = new javax.swing.JTextField();
+        comboRoomStat = new javax.swing.JComboBox<>();
+        rtn = new javax.swing.JTextField();
+        roompernight = new javax.swing.JTextField();
+        jLabel10 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -68,31 +78,27 @@ public class addrooms extends javax.swing.JFrame {
 
         jLabel2.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel2.setText("Room Number:");
-        jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 110, 100, 30));
+        jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 140, 100, 30));
 
         jLabel3.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel3.setText("Room Type Name:");
-        jPanel1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 170, -1, -1));
+        jPanel1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 190, -1, -1));
 
         jLabel4.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel4.setText("Floor:");
-        jPanel1.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 210, -1, -1));
+        jPanel1.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 110, -1, -1));
 
         status.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         status.setText("Status:");
-        jPanel1.add(status, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 320, -1, -1));
+        jPanel1.add(status, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 270, -1, -1));
 
         jLabel6.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel6.setText("Room ID:");
         jPanel1.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 70, -1, -1));
 
-        jLabel7.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel7.setText("Room Price:");
-        jPanel1.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 270, -1, -1));
-
         jLabel8.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel8.setText("Description:");
-        jPanel1.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 380, -1, -1));
+        jPanel1.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 310, -1, -1));
 
         jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
@@ -104,9 +110,9 @@ public class addrooms extends javax.swing.JFrame {
                 jLabel9MouseClicked(evt);
             }
         });
-        jPanel2.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 60, 30));
+        jPanel2.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 50, 30));
 
-        jPanel1.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 500, 60, 30));
+        jPanel1.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 430, 60, 30));
 
         jPanel3.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
@@ -134,41 +140,36 @@ public class addrooms extends javax.swing.JFrame {
             }
         });
         jPanel1.add(roomid, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 70, 140, 30));
-        jPanel1.add(floor, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 210, 140, 30));
-        jPanel1.add(roompr, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 260, 140, 30));
+        jPanel1.add(floor, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 150, 140, 30));
 
         desc.setColumns(20);
         desc.setRows(5);
         jScrollPane1.setViewportView(desc);
 
-        jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 380, 140, 110));
-
-        comboRoomTypeName.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        comboRoomTypeName.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                comboRoomTypeNameMouseClicked(evt);
-            }
-        });
-        comboRoomTypeName.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                comboRoomTypeNameActionPerformed(evt);
-            }
-        });
-        jPanel1.add(comboRoomTypeName, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 160, 140, 30));
+        jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 310, 140, 110));
+        jPanel1.add(roomnum1, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 110, 140, 30));
 
         comboRoomStat.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        comboRoomStat.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                comboRoomStatMouseClicked(evt);
-            }
-        });
         comboRoomStat.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 comboRoomStatActionPerformed(evt);
             }
         });
-        jPanel1.add(comboRoomStat, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 310, 140, 30));
-        jPanel1.add(roomnum1, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 110, 140, 30));
+        jPanel1.add(comboRoomStat, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 270, 140, 30));
+
+        rtn.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                rtnMouseClicked(evt);
+            }
+        });
+        jPanel1.add(rtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 190, 140, 30));
+
+        roompernight.setEditable(false);
+        jPanel1.add(roompernight, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 230, 140, 30));
+
+        jLabel10.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel10.setText("Room Per Night:");
+        jPanel1.add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 230, -1, -1));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -186,53 +187,71 @@ public class addrooms extends javax.swing.JFrame {
 
     private void jLabel9MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel9MouseClicked
     String rNum = roomnum1.getText().trim();
-    String rPrice = roompr.getText().trim();
-    Object typeSelected = comboRoomTypeName.getSelectedItem();
+    String rPricePerNight = roompernight.getText().trim();
+    String rType = rtn.getText().trim(); 
+    String rFloor = floor.getText().trim();
+    
+    // Safety check for null selection
+    Object selectedStat = comboRoomStat.getSelectedItem();
+    String rStatus = (selectedStat != null) ? selectedStat.toString() : "Available";
+    String rDesc = desc.getText().trim();
 
-    // 1. Validation
-    if (rNum.isEmpty() || rPrice.isEmpty() || typeSelected.toString().contains("--")) {
-        JOptionPane.showMessageDialog(this, "Please fill all required fields!");
+    // Validation
+    if (rNum.isEmpty() || rType.isEmpty() || rPricePerNight.isEmpty()) {
+        JOptionPane.showMessageDialog(this, "Please fill in all required fields!");
         return;
     }
 
     try {
-        int rTypeID = Integer.parseInt(typeSelected.toString().split(" - ")[0]);
-        double price = Double.parseDouble(rPrice);
-        
         config.config conf = new config.config();
         
-        // 2. Use a generic insert method in your config or a direct statement
-        String sql = "INSERT INTO rooms (room_number, room_type_id, floor, room_price, status, description) VALUES (?, ?, ?, ?, ?, ?)";
+        // 1. FIXED SQL: Changed room_type_name to type_name
+        String typeQuery = "SELECT room_type_id FROM room_type WHERE type_name = '" + rType + "'";
+        ResultSet rsType = conf.getData(typeQuery);
         
-        // Check if room number already exists to prevent crashes
-        java.sql.ResultSet check = conf.getData("SELECT * FROM rooms WHERE room_number = ?", rNum);
-        if(check.next()){
-             JOptionPane.showMessageDialog(this, "Room Number " + rNum + " already exists!");
-             return;
+        int typeId = 0;
+        if(rsType != null && rsType.next()) {
+            typeId = rsType.getInt("room_type_id");
+        } else {
+            JOptionPane.showMessageDialog(this, "Room Type not found in database.");
+            return;
         }
 
-        // 3. Execute the Insert using a connection that CLOSES automatically
-        try (Connection conn = conf.connectDB(); 
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            
+        // 2. Insert into database
+        String sql = "INSERT INTO rooms (room_number, room_type_name, floor, room_pricepernight, status, description) " +
+                     "VALUES (?, ?, ?, ?, ?, ?)";
+        
+        Connection conn = conf.connectDB();
+        if (conn == null) {
+            JOptionPane.showMessageDialog(this, "Database connection failed!");
+            return;
+        }
+
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, rNum);
-            pstmt.setInt(2, rTypeID);
-            pstmt.setString(3, floor.getText());
-            pstmt.setDouble(4, price);
-            pstmt.setString(5, comboRoomStat.getSelectedItem().toString());
-            pstmt.setString(6, desc.getText());
+            // NOTE: Using typeId here, but check if your 'rooms' table 
+            // column is named 'room_type_id' or 'room_type_name'
+            pstmt.setInt(2, typeId); 
+            pstmt.setString(3, rFloor);
+            pstmt.setDouble(4, Double.parseDouble(rPricePerNight));
+            pstmt.setString(5, rStatus);
+            pstmt.setString(6, rDesc);
             
             pstmt.executeUpdate();
             JOptionPane.showMessageDialog(this, "Room Added Successfully!");
             
-            new managerooms().setVisible(true);
+            managerooms mr = new managerooms();
+            mr.setVisible(true);
             this.dispose();
+        } finally {
+            conn.close();
         }
 
     } catch (NumberFormatException e) {
-        JOptionPane.showMessageDialog(this, "Price must be a valid number!");
+        JOptionPane.showMessageDialog(this, "Invalid Price Format!");
     } catch (Exception e) {
-        JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(null, "Save Error: " + e.getMessage()); 
     }
 
 
@@ -261,96 +280,17 @@ public class addrooms extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_roomidActionPerformed
 
-    private void comboRoomTypeNameMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_comboRoomTypeNameMouseClicked
-    // Use the refactored config method to get data safely
-    config.config conf = new config.config();
-    String query = "SELECT room_type_id, type_name FROM room_type WHERE status = 'Active'";
-    
-    try (java.sql.ResultSet rs = conf.getData(query)) {
-        comboRoomTypeName.removeAllItems();
-        comboRoomTypeName.addItem("-- Select Type --");
-        
-        while (rs != null && rs.next()) {
-            comboRoomTypeName.addItem(rs.getInt("room_type_id") + " - " + rs.getString("type_name"));
-        }
-    } catch (SQLException e) {
-        System.out.println("Error populating types: " + e.getMessage());
-    }
-
-    }//GEN-LAST:event_comboRoomTypeNameMouseClicked
-
     private void comboRoomStatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboRoomStatActionPerformed
- 
+        // TODO add your handling code here:
     }//GEN-LAST:event_comboRoomStatActionPerformed
 
-    private void comboRoomStatMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_comboRoomStatMouseClicked
-    // 1. Get the type name you just picked
-        Object selected = comboRoomTypeName.getSelectedItem();
-        if (selected == null) return;
-        
-        // Get only the Type Name (the part after the " - ")
-        String selectedType = selected.toString().split(" - ")[1];
-
-        try (Connection conn = DriverManager.getConnection("jdbc:sqlite:booking.db")) {
-            String sql = "SELECT status FROM room_type WHERE type_name = ?";
-            PreparedStatement pstmt = conn.prepareStatement(sql);
-            pstmt.setString(1, selectedType);
-            ResultSet rs = pstmt.executeQuery();
-
-            if (rs.next()) {
-                String typeStatus = rs.getString("status");
-
-                if ("Inactive".equalsIgnoreCase(typeStatus)) {
-                    comboRoomStat.setSelectedItem("Maintenance");
-                    comboRoomStat.setEnabled(false); 
-                    JOptionPane.showMessageDialog(this, "Note: This category is currently Inactive.");
-                } else {
-                    comboRoomStat.setEnabled(true);
-                }
-            }
-        } catch (Exception e) {
-            System.out.println("Sync Error: " + e.getMessage());
-        }
-    
-    }//GEN-LAST:event_comboRoomStatMouseClicked
-
-    private void comboRoomTypeNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboRoomTypeNameActionPerformed
-    Object selected = comboRoomTypeName.getSelectedItem();
-    if (selected == null || selected.toString().contains("--")) return;
-
-    try {
-        // 1. Get the ID from the selection "1 - Deluxe"
-        int typeId = Integer.parseInt(selected.toString().split(" - ")[0]);
-        
-        config.config conf = new config.config();
-        
-        // 2. Check if all current rooms of this type are occupied
-        String checkSql = "SELECT status FROM rooms WHERE room_type_id = ?";
-        java.sql.ResultSet rs = conf.getData(checkSql, typeId);
-        
-        boolean hasAvailable = false;
-        int count = 0;
-        
-        while(rs.next()){
-            count++;
-            if(rs.getString("status").equalsIgnoreCase("Available")){
-                hasAvailable = true;
-            }
-        }
-        
-        // 3. Logic: If there are existing rooms and NONE are available
-        if (count > 0 && !hasAvailable) {
-            JOptionPane.showMessageDialog(this, "Note: All existing rooms of this type are currently OCCUPIED.");
-            comboRoomStat.setSelectedItem("Available"); // Set the NEW room to Available by default
-        } else {
-            comboRoomStat.setSelectedItem("Available");
-        }
-        
-    } catch (Exception e) {
-        System.out.println("Status Check Error: " + e.getMessage());
-    }
-        // TODO add your handling code here:
-    }//GEN-LAST:event_comboRoomTypeNameActionPerformed
+    private void rtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_rtnMouseClicked
+    // This matches: (Parent Frame, Modal, addrooms instance)
+    roomtypelookup rtl = new roomtypelookup(this, true, this); 
+    rtl.setLocationRelativeTo(null); 
+    rtl.setVisible(true);
+  // TODO add your handling code here:
+    }//GEN-LAST:event_rtnMouseClicked
 
     /**
      * @param args the command line arguments
@@ -391,14 +331,13 @@ public class addrooms extends javax.swing.JFrame {
     private javax.swing.JLabel addrooms;
     private javax.swing.JLabel back;
     private javax.swing.JComboBox<String> comboRoomStat;
-    private javax.swing.JComboBox<String> comboRoomTypeName;
     private javax.swing.JTextArea desc;
     private javax.swing.JTextField floor;
+    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
@@ -407,7 +346,8 @@ public class addrooms extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField roomid;
     private javax.swing.JTextField roomnum1;
-    private javax.swing.JTextField roompr;
+    private javax.swing.JTextField roompernight;
+    private javax.swing.JTextField rtn;
     private javax.swing.JLabel status;
     // End of variables declaration//GEN-END:variables
 }

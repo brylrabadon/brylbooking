@@ -41,46 +41,43 @@ public class managerooms extends javax.swing.JFrame {
 public void showDataInTable() {
     try {
         java.sql.Connection conn = java.sql.DriverManager.getConnection("jdbc:sqlite:booking.db");
-        // We use a JOIN to get the Name of the type from the other table
-        String sql = "SELECT r.room_id, r.room_number, rt.type_name, r.floor, r.room_price, r.status " +
-                     "FROM rooms r JOIN room_type rt ON r.room_type_id = rt.room_type_id";
+        
+        // Corrected the JOIN column name to r.room_type_name
+        String sql = "SELECT r.room_id, r.room_number, rt.type_name, r.floor, r.room_pricepernight, r.status " +
+                     "FROM rooms r JOIN room_type rt ON r.room_type_name = rt.room_type_id";
         
         java.sql.PreparedStatement pstmt = conn.prepareStatement(sql);
         java.sql.ResultSet rs = pstmt.executeQuery();
         
-        // Get the table model (ensure your JTable variable is named 'jTable1')
-        javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) rooms_table.getModel();
-        
-        String[] headers = {"Room ID", "Room Number", "Room Type Name", "Floor", "Room Price", "Status"};
-        model.setColumnIdentifiers(headers);
-        
-
-        model.setRowCount(0); // Clear the table first
+        DefaultTableModel model = (DefaultTableModel) rooms_table.getModel();
+        model.setRowCount(0); 
 
         while (rs.next()) {
             model.addRow(new Object[]{
                 rs.getInt("room_id"),
                 rs.getString("room_number"),
-                rs.getString("type_name"),
+                rs.getString("type_name"), 
                 rs.getString("floor"),
-                rs.getDouble("room_price"),
+                rs.getDouble("room_pricepernight"), 
                 rs.getString("status")
             });
         }
         conn.close();
     } catch (Exception e) {
-        System.out.println("Table Error: " + e.getMessage());
+        // This will now show the actual error message instead of 'null' if something fails
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(null, "Table Error: " + e.getMessage());
     }
 }
  public void updateTable() {
-    // Make sure DefaultTableModel is imported
     DefaultTableModel model = (DefaultTableModel) rooms_table.getModel();
     model.setRowCount(0); 
 
-    // Note the spaces at the end of the strings to prevent "rJOIN" errors
-    String query = "SELECT r.room_id, r.room_number, t.type_name, r.floor, r.room_price, r.status " +
-                   "FROM rooms r " +
-                   "JOIN room_type t ON r.room_type_id = t.room_type_id";
+    // FIX: Changed t.room_type_name to t.type_name 
+    // FIX: Changed r.room_price to r.room_pricepernight
+    String query = "SELECT r.room_id, r.room_number, rt.type_name, r.floor, r.room_pricepernight, r.status " +
+             "FROM rooms r " + 
+             "JOIN room_type rt ON r.room_type_name = rt.room_type_id";
 
     try (Connection conn = DriverManager.getConnection("jdbc:sqlite:booking.db");
          Statement st = conn.createStatement();
@@ -92,13 +89,13 @@ public void showDataInTable() {
                 rs.getString("room_number"),
                 rs.getString("type_name"), 
                 rs.getString("floor"),
-                rs.getDouble("room_price"),
+                rs.getDouble("room_pricepernight"),
                 rs.getString("status")
             };
             model.addRow(row);
         }
     } catch (Exception e) {
-        JOptionPane.showMessageDialog(null, "Table Error: " + e.getMessage());
+        JOptionPane.showMessageDialog(null, "Update Table Error: " + e.getMessage());
     }
 }
 
@@ -172,6 +169,11 @@ public void showDataInTable() {
 
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel2.setText("DELETE");
+        jLabel2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel2MouseClicked(evt);
+            }
+        });
         jPanel3.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 90, 40));
 
         jPanel1.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 150, 90, 40));
@@ -193,6 +195,11 @@ public void showDataInTable() {
 
         jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel4.setText("EDIT");
+        jLabel4.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel4MouseClicked(evt);
+            }
+        });
         jPanel5.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 90, 40));
 
         jPanel1.add(jPanel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 150, 90, 40));
@@ -205,7 +212,7 @@ public void showDataInTable() {
                 {null, null, null, null, null, null}
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4", "Title 5", "Title 6"
+                "Room ID", "Floor", "Room Type Name", "Room Number", "Price Per Night", "Status"
             }
         ));
         jScrollPane1.setViewportView(rooms_table);
@@ -243,14 +250,74 @@ public void showDataInTable() {
     }//GEN-LAST:event_backMouseExited
 
     private void addroomsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_addroomsMouseClicked
-    // This opens your 'add.java' form
-    // This opens your 'add.java' form
-    addrooms add = new addrooms();
-    add.setVisible(true);
-    
-    this.dispose();        // TODO add your handling code here:
+    // 1. Create the instance of the Add Rooms form
+    addrooms addForm = new addrooms();
+    addForm.setVisible(true);
+    addForm.pack();
+    addForm.setLocationRelativeTo(null);
+    addForm.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+    // 2. Add a WindowListener to detect when the Add form is closed
+    addForm.addWindowListener(new java.awt.event.WindowAdapter() {
+        @Override
+        public void windowClosed(java.awt.event.WindowEvent windowEvent) {
+            // 3. This code runs AFTER the add window is closed
+            showDataInTable(); 
+            System.out.println("Table refreshed after adding room.");
+        }
+    });
 
     }//GEN-LAST:event_addroomsMouseClicked
+
+    private void jLabel2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel2MouseClicked
+    int row = rooms_table.getSelectedRow();
+    if (row == -1) {
+        JOptionPane.showMessageDialog(this, "Please select a room to delete!");
+    } else {
+        String id = rooms_table.getValueAt(row, 0).toString();
+        int opt = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete Room ID: " + id + "?", "Delete", JOptionPane.YES_NO_OPTION);
+        
+        if (opt == 0) {
+            try {
+                config.config conf = new config.config();
+                Connection conn = conf.connectDB();
+                String sql = "DELETE FROM rooms WHERE room_id = ?";
+                PreparedStatement pstmt = conn.prepareStatement(sql);
+                pstmt.setString(1, id);
+                pstmt.executeUpdate();
+                
+                JOptionPane.showMessageDialog(this, "Deleted Successfully");
+                showDataInTable(); // Refresh the table
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
+            }
+        }
+    }
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jLabel2MouseClicked
+
+    private void jLabel4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel4MouseClicked
+    int row = rooms_table.getSelectedRow();
+    if (row == -1) {
+        JOptionPane.showMessageDialog(this, "Please select a room to edit!");
+    } else {
+        DefaultTableModel model = (DefaultTableModel) rooms_table.getModel();
+        editrooms edit = new editrooms(); // Create a new class called editrooms
+        
+        // Passing data to the edit fields
+        // Corrected Mapping in managerooms.java
+     edit.roomid.setText(model.getValueAt(row, 0).toString());
+     edit.editfloor.setText(model.getValueAt(row, 1).toString()); // Index 1 is Floor
+     edit.rtn.setText(model.getValueAt(row, 2).toString());
+     edit.editroomnum.setText(model.getValueAt(row, 3).toString()); // Index 3 is Room Number
+     edit.roompernight.setText(model.getValueAt(row, 4).toString());
+     edit.editcomboboxstatus.setSelectedItem(model.getValueAt(row, 5).toString());
+        
+     edit.setVisible(true);
+     this.dispose();
+    }
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jLabel4MouseClicked
 
     /**
      * @param args the command line arguments

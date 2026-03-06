@@ -42,7 +42,6 @@ public class addroomtype extends javax.swing.JFrame {
         addrooms = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
@@ -52,7 +51,6 @@ public class addroomtype extends javax.swing.JFrame {
         typename = new javax.swing.JTextField();
         capa = new javax.swing.JTextField();
         ppn = new javax.swing.JTextField();
-        typestat = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         typedesc = new javax.swing.JTextArea();
 
@@ -73,17 +71,13 @@ public class addroomtype extends javax.swing.JFrame {
         jLabel3.setText("Price Per Night:");
         jPanel1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 170, -1, -1));
 
-        jLabel5.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel5.setText("Status:");
-        jPanel1.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 220, -1, -1));
-
         jLabel6.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel6.setText("Type Name:");
         jPanel1.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 90, -1, -1));
 
         jLabel8.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel8.setText("Description:");
-        jPanel1.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 260, -1, -1));
+        jPanel1.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 210, -1, -1));
 
         jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
@@ -97,7 +91,7 @@ public class addroomtype extends javax.swing.JFrame {
         });
         jPanel2.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 60, 30));
 
-        jPanel1.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 390, 60, 30));
+        jPanel1.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 330, 60, 30));
 
         jPanel3.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
@@ -126,13 +120,12 @@ public class addroomtype extends javax.swing.JFrame {
         jPanel1.add(typename, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 80, 140, 30));
         jPanel1.add(capa, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 120, 140, 30));
         jPanel1.add(ppn, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 160, 140, 30));
-        jPanel1.add(typestat, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 210, 140, 30));
 
         typedesc.setColumns(20);
         typedesc.setRows(5);
         jScrollPane1.setViewportView(typedesc);
 
-        jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 260, 140, 110));
+        jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 210, 140, 110));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -152,9 +145,9 @@ public class addroomtype extends javax.swing.JFrame {
     String name = typename.getText();
     String cap = capa.getText();
     String price = ppn.getText();
-    String stat = typestat.getText();
     String desc = typedesc.getText();
 
+    // Validation
     if (name.isEmpty() || cap.isEmpty() || price.isEmpty()) {
         javax.swing.JOptionPane.showMessageDialog(this, "Please fill in all required fields!");
         return;
@@ -162,23 +155,28 @@ public class addroomtype extends javax.swing.JFrame {
 
     try {
         config.config conf = new config.config();
-        String sql = "INSERT INTO room_type (type_name, capacity, price_per_night, status, description) VALUES(?,?,?,?,?)";
+        
+        // Match the columns in your database. 
+        // Note: I added "Available" as a default status for new room types.
+        String sql = "INSERT INTO room_type (type_name, capacity, price_per_night, description) VALUES(?,?,?,?)";
 
-        // addRecord handles closing the connection internally
-        conf.addRecord(sql, name, Integer.parseInt(cap), Double.parseDouble(price), stat, desc);
+        // Execute the addRecord
+        conf.addRecord(sql, name, Integer.parseInt(cap), Double.parseDouble(price), desc);
 
         javax.swing.JOptionPane.showMessageDialog(this, "Room Type Saved!");
         
-        // Use a new instance to refresh the table and close this window
-        new room_type().setVisible(true);
+        // REFRESH LOGIC:
+        // By creating a new instance, the constructor runs showDataInTable() 
+        // which fetches the newly saved data from the DB.
+        new room_type().setVisible(true); 
         this.dispose(); 
 
     } catch (NumberFormatException e) {
         javax.swing.JOptionPane.showMessageDialog(this, "Error: Capacity and Price must be numbers!");
     } catch (Exception e) {
-        // This is where your [SQLITE_BUSY] was being caught
-        System.out.println("Database sync notice: " + e.getMessage());
+        System.out.println("Database error: " + e.getMessage());
     }
+
 
 
       
@@ -248,7 +246,6 @@ public class addroomtype extends javax.swing.JFrame {
     private javax.swing.JTextField capa;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
@@ -259,6 +256,5 @@ public class addroomtype extends javax.swing.JFrame {
     private javax.swing.JTextField ppn;
     private javax.swing.JTextArea typedesc;
     private javax.swing.JTextField typename;
-    private javax.swing.JTextField typestat;
     // End of variables declaration//GEN-END:variables
 }

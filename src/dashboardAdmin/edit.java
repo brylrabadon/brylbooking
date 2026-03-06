@@ -16,7 +16,6 @@ public class edit extends javax.swing.JFrame {
     /**
      * Creates new form edit
      * 
-     * 
      */
     public edit() { 
     session sess = session.getInstance();// or public dashboarduser()
@@ -28,20 +27,21 @@ public class edit extends javax.swing.JFrame {
         return;
     }
     initComponents();
-    
-}
 
-    public edit(String rl, String f, String l, String em, String cont, String us) {
-      
-    role.setText(rl); // This will now show "Guest" if "Guest" is passed
+}
+    public int accountID; // Add this line
+
+    public edit(int id, String rl, String f, String l, String em, String cont, String us) {
+    initComponents(); // IMPORTANT: Don't forget to call this so the UI loads
+    this.accountID = id; // This saves the ID so the Update button can use it
+    
+    role.setText(rl);
     fname.setText(f);
     lname.setText(l);
     email.setText(em);
     contact.setText(cont);
     user.setText(us);
-    
-    role.setEditable(false);
-    }
+}
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -149,6 +149,8 @@ public class edit extends javax.swing.JFrame {
         jPanel1.add(fname, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 120, 140, 30));
         jPanel1.add(lname, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 160, 140, 30));
         jPanel1.add(email, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 210, 140, 30));
+
+        pass.setEditable(false);
         jPanel1.add(pass, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 330, 140, 30));
         jPanel1.add(user, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 290, 140, 30));
 
@@ -175,46 +177,40 @@ public class edit extends javax.swing.JFrame {
     config conf = new config();
 
     // 1. Collect values from your TextFields
-    String id = role.getText();
+    // We use 'role' field value as the identifier (if it contains the unique ID or Username)
+    String roleVal = role.getText(); 
     String first = fname.getText();
     String last = lname.getText();
     String em = email.getText();
     String cont = contact.getText();
     String username = user.getText();
-    String rawPassword = pass.getText();
 
-    // 2. Validation: Ensure required fields are not empty
-    if(id.isEmpty() || first.isEmpty() || last.isEmpty() || em.isEmpty() || username.isEmpty() || rawPassword.isEmpty()) {
+    // 2. Validation: Ensure required fields are not empty (removed password)
+    if(first.isEmpty() || last.isEmpty() || em.isEmpty() || username.isEmpty()) {
         JOptionPane.showMessageDialog(null, "All fields are required!");
         return;
     }
 
     try {
-        // 3. Hash the password before saving for security
-        // Note: Check if your class is 'passwordhashed' or 'config.passwordhashed' based on your imports
-        String hashedPass = passwordhashed.hashPassword(rawPassword); 
+        // 3. CORRECTED SQL: Targeted the 'accounts' table instead of 'role'
+        // We use username in the WHERE clause to ensure the correct record is updated
+        // Corrected SQL using account_id
+        // Inside your UPDATE button click in edit.java
+String accountSql = "UPDATE accounts SET first_name = ?, last_name = ?, email = ?, contact = ?, username = ? WHERE account_id = ?";
 
-        // 4. SQL for 'guest' table (Update personal info)
-        String accountSql = "UPDATE role SET first_name = ?, last_name = ?, email = ?, contact = ?, username = ?, password = ? WHERE role = ?";
-        
-        // 5. SQL for 'accounts' table (Sync login credentials)
-        // We update based on the username to keep the login table in sync
-
-        // 6. Execute Guest Update
-        int accountResult = conf.executeUpdate(accountSql, first, last, em, cont, username, hashedPass, id);
+// Use the accountID variable stored in the class
+int accountResult = conf.executeUpdate(accountSql, first, last, em, cont, username, this.accountID);
 
         if(accountResult > 0) {
-            // 7. Execute Account Update (Syncing the login credentials)
-            conf.executeUpdate(accountSql, hashedPass, "User", "Active", username);
+            JOptionPane.showMessageDialog(null, "Profile Updated Successfully!");
 
-            JOptionPane.showMessageDialog(null, "Guest Profile Updated Successfully!");
-
-            // Return to the manage users dashboard
+            // Return to the manage accounts dashboard
             dashboardAdmin.manageaccount manage = new dashboardAdmin.manageaccount();
             manage.setVisible(true);
             this.dispose();
         } else {
-            JOptionPane.showMessageDialog(null, "Update failed. ID not found.");
+            // This happens if the 'username' in the WHERE clause doesn't exist in the DB
+            JOptionPane.showMessageDialog(null, "Update failed. Username not found.");
         }
 
     } catch (Exception e) {

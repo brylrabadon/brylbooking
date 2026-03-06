@@ -33,7 +33,7 @@ public class room_type extends javax.swing.JFrame {
     public void showDataInTable() {
     config.config conf = new config.config();
     // This query is fine, and displayData now handles the closing logic perfectly.
-    conf.displayData("SELECT room_type_id, type_name, capacity, price_per_night, status FROM room_type", roomtype_table);
+    conf.displayData("SELECT room_type_id, type_name, capacity, price_per_night FROM room_type", roomtype_table);
 }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -121,13 +121,13 @@ public class room_type extends javax.swing.JFrame {
 
         roomtype_table.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null}
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4", "Title 5"
+                "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
         jScrollPane1.setViewportView(roomtype_table);
