@@ -24,6 +24,10 @@ public class roomtypelookup extends javax.swing.JDialog {
         // Load the data immediately
         displayTable(); 
     }
+    
+    public roomtypelookup(){
+        initComponents();
+    }
 
     private void displayTable() {
         try {

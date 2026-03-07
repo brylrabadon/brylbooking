@@ -176,7 +176,36 @@ public class mybookings extends javax.swing.JFrame {
     }//GEN-LAST:event_addMouseClicked
 
     private void jLabel4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel4MouseClicked
-      
+    int row = bookingsTable.getSelectedRow();
+    
+    if (row != -1) {
+        try {
+            // 1. Extract data from the table
+            int bId = Integer.parseInt(bookingsTable.getValueAt(row, 0).toString());
+            String roomName = bookingsTable.getValueAt(row, 1).toString();
+            String cin = bookingsTable.getValueAt(row, 2).toString();
+            String cout = bookingsTable.getValueAt(row, 3).toString();
+            int nights = Integer.parseInt(bookingsTable.getValueAt(row, 4).toString());
+            double cost = Double.parseDouble(bookingsTable.getValueAt(row, 5).toString());
+
+            // 2. Open editbookings
+            editbookings edit = new editbookings(bId, roomName, cin, cout, nights, cost);
+            
+            // 3. Convert String dates from table to Date objects for the JDateChooser
+            java.util.Date dateIn = new java.text.SimpleDateFormat("yyyy-MM-dd").parse(cin);
+            java.util.Date dateOut = new java.text.SimpleDateFormat("yyyy-MM-dd").parse(cout);
+            edit.setDates(dateIn, dateOut);
+
+            edit.setVisible(true);
+            this.dispose(); 
+            
+        } catch (Exception e) {
+            javax.swing.JOptionPane.showMessageDialog(null, "Error parsing booking data: " + e.getMessage());
+        }
+    } else {
+        javax.swing.JOptionPane.showMessageDialog(null, "Please select a booking from the table first!");
+    }
+
     }//GEN-LAST:event_jLabel4MouseClicked
 
     private void backMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_backMouseClicked

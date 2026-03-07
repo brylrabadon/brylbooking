@@ -5,82 +5,76 @@
  */
 package dashboardUser;
 
-import config.session;
-import dashboardUser.RoomItem;
 import config.config;
-import java.sql.*;
-import javax.swing.JOptionPane;
-import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
-import java.text.SimpleDateFormat;
 
-public class bookings extends javax.swing.JFrame {
+/**
+ *
+ * @author Personal-PC
+ */
+public class editbookings extends javax.swing.JFrame {
+// Top of editbookings class
+public int bookingId = -1;      
+public int selectedRoomId = -1; 
+public double roomPrice = 0.0;  
 
-   public int selectedRoomId = -1; 
-    public javax.swing.JTextField ppn;
+
+
+// Updated Constructor
+public editbookings(int bId, String roomName, String cin, String cout, int nights, double cost) {
+    initComponents();
+    this.bookingId = bId;
+    this.ar.setText(roomName);
+    this.totalnights.setText(String.valueOf(nights));
+    this.totalcost.setText(String.valueOf(cost));
     
-public bookings() {
-    initComponents(); // Always call this first
-    
-    // 1. Initialize ppn if it's null
-    if (ppn == null) {
-        ppn = new javax.swing.JTextField();
-        ppn.setText("0");
+    if (nights > 0) {
+        this.roomPrice = cost / nights;
     }
 
-    // 2. Set default values
-    totalnights.setText("0");
-    totalcost.setText("0.00");
-    ar.setEditable(false);
-
-    // 3. Add PropertyChangeListeners to trigger calculation immediately on date selection
-    checkin.addPropertyChangeListener("date", new java.beans.PropertyChangeListener() {
-        public void propertyChange(java.beans.PropertyChangeEvent evt) {
-            calculateTotal();
-        }
+    // ADD THESE SO IT WORKS WHEN OPENED FROM MYBOOKINGS
+    checkin.addPropertyChangeListener(evt -> {
+        if ("date".equals(evt.getPropertyName())) calculateTotal();
     });
-
-    checkout.addPropertyChangeListener("date", new java.beans.PropertyChangeListener() {
-        public void propertyChange(java.beans.PropertyChangeEvent evt) {
-            calculateTotal();
-        }
+    checkout.addPropertyChangeListener(evt -> {
+        if ("date".equals(evt.getPropertyName())) calculateTotal();
     });
 }
 
+// Add this helper method so MyBookings can set the dates
+public void setDates(java.util.Date in, java.util.Date out) {
+    this.checkin.setDate(in);
+    this.checkout.setDate(out);
+    calculateTotal(); // Trigger calculation immediately after setting initial dates
+}
+    public editbookings() {
+        initComponents();
+ }
+    
+    
 public void calculateTotal() {
-    try {
-        if (checkin.getDate() != null && checkout.getDate() != null && ppn != null && !ppn.getText().isEmpty()) {
-            java.util.Date d1 = checkin.getDate();
-            java.util.Date d2 = checkout.getDate();
+    if (checkin.getDate() != null && checkout.getDate() != null) {
+        // Calculate the difference in milliseconds
+        long diff = checkout.getDate().getTime() - checkin.getDate().getTime();
+        
+        // Convert milliseconds to days (1000ms * 60s * 60m * 24h)
+        long days = diff / (24 * 60 * 60 * 1000);
 
-            // Calculate the difference in milliseconds
-            long diff = d2.getTime() - d1.getTime();
+        if (days < 0) {
+            // If user picks a checkout date BEFORE checkin
+            totalnights.setText("0");
+            totalcost.setText("0.00");
+        } else {
+            // Use 1 as minimum nights if dates are the same
+            if (days == 0) days = 1; 
+
+            totalnights.setText(String.valueOf(days));
             
-            // Convert to days and ADD 1 to include both start and end days
-            long days = (diff / (24 * 60 * 60 * 1000)) + 1;
-
-            if (days <= 0) {
-                totalnights.setText("0");
-                totalcost.setText("0.00");
-            } else {
-                totalnights.setText(String.valueOf(days));
-                
-                // Get price from the ppn field
-                double price = Double.parseDouble(ppn.getText());
-                double total = days * price;
-                
-                totalcost.setText(String.format("%.2f", total));
-            }
+            // roomPrice was calculated in your constructor
+            double total = days * roomPrice; 
+            totalcost.setText(String.format("%.2f", total));
         }
-    } catch (Exception e) {
-        // Silently handle parsing errors while typing
-        totalcost.setText("0.00");
     }
 }
-
-
-
-
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -119,8 +113,9 @@ public void calculateTotal() {
         jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 36)); // NOI18N
-        jLabel1.setText("BOOKINGS");
-        jPanel2.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 20, -1, -1));
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel1.setText("EDIT BOOKINGS");
+        jPanel2.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 30, 360, -1));
 
         jPanel1.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 360, 100));
 
@@ -138,7 +133,19 @@ public void calculateTotal() {
 
         jLabel17.setText("Check-In:");
         jPanel9.add(jLabel17, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 90, 60, 20));
+
+        checkin.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                checkinPropertyChange(evt);
+            }
+        });
         jPanel9.add(checkin, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 70, 170, 40));
+
+        checkout.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                checkoutPropertyChange(evt);
+            }
+        });
         jPanel9.add(checkout, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 120, 170, 40));
 
         jPanel11.setBackground(new java.awt.Color(102, 102, 102));
@@ -146,7 +153,7 @@ public void calculateTotal() {
 
         cancel.setForeground(new java.awt.Color(255, 255, 255));
         cancel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        cancel.setText("Cancel Booking");
+        cancel.setText("Cancel");
         cancel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 cancelMouseClicked(evt);
@@ -167,7 +174,7 @@ public void calculateTotal() {
 
         confirmbook.setForeground(new java.awt.Color(255, 255, 255));
         confirmbook.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        confirmbook.setText("Confirm Booking");
+        confirmbook.setText("Edit  Booking");
         confirmbook.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 confirmbookMouseClicked(evt);
@@ -186,6 +193,7 @@ public void calculateTotal() {
         jLabel18.setText("Total Nights:");
         jPanel9.add(jLabel18, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 180, 90, 20));
 
+        ar.setEditable(false);
         ar.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 arMouseClicked(evt);
@@ -209,65 +217,9 @@ public void calculateTotal() {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void confirmbookMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_confirmbookMouseClicked
-    try {
-        session sess = session.getInstance();
-        int accId = sess.getAccountId();
-
-        // 1. Validation: This check failed before because selectedRoomId was -1
-        if (selectedRoomId == -1) {
-            JOptionPane.showMessageDialog(null, "Please select a room from the list first!");
-            return;
-        }
-        if (checkin.getDate() == null || checkout.getDate() == null) {
-            JOptionPane.showMessageDialog(null, "Please select both Check-In and Check-Out dates!");
-            return;
-        }
-
-        // 2. Format dates for SQL (YYYY-MM-DD)
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        String strIn = sdf.format(checkin.getDate());
-        String strOut = sdf.format(checkout.getDate());
-
-        config db = new config();
-
-        // 3. Insert into bookings table
-        // Ensure column names match your database: account_id, room_id, check_in, check_out, total_night, total_price
-        String sql = "INSERT INTO bookings (account_id, room_id, check_in, check_out, total_night, total_price, booking_status) "
-                   + "VALUES (?, ?, ?, ?, ?, ?, 'Booked')";
-
-        int result = db.executeUpdate(sql, 
-            accId, 
-            selectedRoomId, 
-            strIn, 
-            strOut, 
-            Integer.parseInt(totalnights.getText()), // This will be '4' for Mar 7-10
-            Double.parseDouble(totalcost.getText())  // This will be '2800'
-        );
-
-        // 4. Update Room Status to 'Occupied' so it disappears from 'Available' list
-        if (result > 0) {
-            db.executeUpdate("UPDATE rooms SET status='Occupied' WHERE room_id=?", selectedRoomId);
-            
-            JOptionPane.showMessageDialog(null, "Booking Successful! ✅\nTotal Days: " + totalnights.getText());
-            
-            // Redirect to your bookings list
-            new mybookings().setVisible(true);
-            this.dispose();
-        }
-
-    } catch (NumberFormatException e) {
-        JOptionPane.showMessageDialog(null, "Error: Invalid price or night calculation. Please re-select dates.");
-    } catch (Exception e) {
-        JOptionPane.showMessageDialog(null, "Booking Error: " + e.getMessage());
-    }
-
-
-    }//GEN-LAST:event_confirmbookMouseClicked
-
     private void cancelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cancelMouseClicked
-        dashboardguest dash = new dashboardguest();
-        dash.setVisible(true); // Show the dashboard again
+        mybookings book = new mybookings();
+        book.setVisible(true); // Show the dashboard again
         this.dispose();          // TODO add your handling code here:
     }//GEN-LAST:event_cancelMouseClicked
 
@@ -281,13 +233,53 @@ public void calculateTotal() {
         cancel.setForeground(java.awt.Color.BLUE);        // TODO add your handling code here:
     }//GEN-LAST:event_cancelMouseExited
 
-    private void arMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_arMouseClicked
-    // Passing 'this' (the current bookings window) to selectrooms
-    selectrooms sr = new selectrooms(this); 
-    sr.setVisible(true);
+    private void confirmbookMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_confirmbookMouseClicked
+    try {
+        config db = new config();
+        java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd");
+        String strIn = sdf.format(checkin.getDate());
+        String strOut = sdf.format(checkout.getDate());
 
-  // TODO add your handling code here:
+        // Use UPDATE instead of INSERT
+        String sql = "UPDATE bookings SET check_in = ?, check_out = ?, total_night = ?, total_price = ? "
+                   + "WHERE bookings_id = ?";
+
+        int result = db.executeUpdate(sql, 
+            strIn, 
+            strOut, 
+            Integer.parseInt(totalnights.getText()), 
+            Double.parseDouble(totalcost.getText()), 
+            bookingId
+        );
+
+        if (result > 0) {
+            javax.swing.JOptionPane.showMessageDialog(null, "Booking Updated Successfully!");
+            new mybookings().setVisible(true);
+            this.dispose();
+        }
+    } catch (Exception e) {
+        javax.swing.JOptionPane.showMessageDialog(null, "Update Error: " + e.getMessage());
+    }
+      
+
+    }//GEN-LAST:event_confirmbookMouseClicked
+
+    private void arMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_arMouseClicked
+ 
     }//GEN-LAST:event_arMouseClicked
+
+    private void checkinPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_checkinPropertyChange
+     if ("date".equals(evt.getPropertyName())) {
+        calculateTotal();
+    }
+        // TODO add your handling code here:
+    }//GEN-LAST:event_checkinPropertyChange
+
+    private void checkoutPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_checkoutPropertyChange
+      if ("date".equals(evt.getPropertyName())) {
+        calculateTotal();
+    }  // TODO add your handling code here:
+    }//GEN-LAST:event_checkoutPropertyChange
 
     /**
      * @param args the command line arguments
@@ -306,20 +298,20 @@ public void calculateTotal() {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(bookings.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(editbookings.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(bookings.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(editbookings.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(bookings.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(editbookings.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(bookings.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(editbookings.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new bookings().setVisible(true);
+                new editbookings().setVisible(true);
             }
         });
     }

@@ -242,12 +242,6 @@ public class dashboardguest extends javax.swing.JFrame {
         this.dispose();         // TODO add your handling code here:
     }//GEN-LAST:event_jLabel3MouseClicked
 
-    private void payMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_payMouseClicked
-        payments pay = new payments();
-        pay.setVisible(true); // Show the dashboard again
-        this.dispose();        // TODO add your handling code here:
-    }//GEN-LAST:event_payMouseClicked
-
     private void booksMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_booksMouseClicked
         mybookings mybook = new mybookings();
         mybook.setVisible(true); // Show the dashboard again
@@ -257,6 +251,10 @@ public class dashboardguest extends javax.swing.JFrame {
     private void payMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_payMouseEntered
         // TODO add your handling code here:
     }//GEN-LAST:event_payMouseEntered
+
+    private void payMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_payMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_payMouseClicked
 
     /**
      * @param args the command line arguments
