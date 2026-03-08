@@ -253,7 +253,10 @@ public class dashboardguest extends javax.swing.JFrame {
     }//GEN-LAST:event_payMouseEntered
 
     private void payMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_payMouseClicked
-        // TODO add your handling code here:
+      payments pay = new payments();
+      pay.setVisible(true);
+      this.dispose();
+// TODO add your handling code here:
     }//GEN-LAST:event_payMouseClicked
 
     /**

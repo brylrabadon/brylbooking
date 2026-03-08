@@ -98,11 +98,13 @@ public void calculateTotal() {
         jPanel11 = new javax.swing.JPanel();
         cancel = new javax.swing.JLabel();
         jPanel12 = new javax.swing.JPanel();
-        confirmbook = new javax.swing.JLabel();
+        cancelbooking = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         totalnights = new javax.swing.JTextField();
         jLabel18 = new javax.swing.JLabel();
         ar = new javax.swing.JTextField();
+        jPanel13 = new javax.swing.JPanel();
+        editbooking = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -115,9 +117,9 @@ public void calculateTotal() {
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 36)); // NOI18N
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("EDIT BOOKINGS");
-        jPanel2.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 30, 360, -1));
+        jPanel2.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 30, 430, -1));
 
-        jPanel1.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 360, 100));
+        jPanel1.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 430, 100));
 
         jPanel9.setBackground(new java.awt.Color(204, 204, 204));
         jPanel9.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -165,24 +167,24 @@ public void calculateTotal() {
                 cancelMouseExited(evt);
             }
         });
-        jPanel11.add(cancel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 100, 40));
+        jPanel11.add(cancel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 110, 40));
 
-        jPanel9.add(jPanel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 280, 100, 40));
+        jPanel9.add(jPanel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 330, 110, 40));
 
         jPanel12.setBackground(new java.awt.Color(102, 102, 102));
         jPanel12.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        confirmbook.setForeground(new java.awt.Color(255, 255, 255));
-        confirmbook.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        confirmbook.setText("Edit  Booking");
-        confirmbook.addMouseListener(new java.awt.event.MouseAdapter() {
+        cancelbooking.setForeground(new java.awt.Color(255, 255, 255));
+        cancelbooking.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        cancelbooking.setText("Cancel  Booking");
+        cancelbooking.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                confirmbookMouseClicked(evt);
+                cancelbookingMouseClicked(evt);
             }
         });
-        jPanel12.add(confirmbook, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 120, 40));
+        jPanel12.add(cancelbooking, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 120, 40));
 
-        jPanel9.add(jPanel12, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 280, 120, 40));
+        jPanel9.add(jPanel12, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 280, 120, 40));
 
         jLabel2.setText("Available Rooms:");
         jPanel9.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 20, 90, 30));
@@ -199,9 +201,24 @@ public void calculateTotal() {
                 arMouseClicked(evt);
             }
         });
-        jPanel9.add(ar, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 20, 170, 40));
+        jPanel9.add(ar, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 20, 310, 40));
 
-        jPanel1.add(jPanel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 100, 360, 370));
+        jPanel13.setBackground(new java.awt.Color(102, 102, 102));
+        jPanel13.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        editbooking.setForeground(new java.awt.Color(255, 255, 255));
+        editbooking.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        editbooking.setText("Edit  Booking");
+        editbooking.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                editbookingMouseClicked(evt);
+            }
+        });
+        jPanel13.add(editbooking, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 120, 40));
+
+        jPanel9.add(jPanel13, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 280, 120, 40));
+
+        jPanel1.add(jPanel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 100, 430, 370));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -233,8 +250,56 @@ public void calculateTotal() {
         cancel.setForeground(java.awt.Color.BLUE);        // TODO add your handling code here:
     }//GEN-LAST:event_cancelMouseExited
 
-    private void confirmbookMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_confirmbookMouseClicked
-    try {
+    private void cancelbookingMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cancelbookingMouseClicked
+    // 1. Confirm with the user before proceeding
+    int confirm = javax.swing.JOptionPane.showConfirmDialog(null, 
+            "Are you sure you want to cancel this booking?", "Confirm Cancellation", 
+            javax.swing.JOptionPane.YES_NO_OPTION);
+
+    if (confirm == javax.swing.JOptionPane.YES_OPTION) {
+        try {
+            config db = new config();
+            
+            // 2. Update the status in the database using the hidden bookingId
+            String sql = "UPDATE bookings SET booking_status = 'Cancelled' WHERE bookings_id = ?";
+            
+            int result = db.executeUpdate(sql, bookingId);
+
+            if (result > 0) {
+                javax.swing.JOptionPane.showMessageDialog(null, "Booking has been Cancelled successfully.");
+                
+                // 3. Refresh and return to the bookings list
+                mybookings mb = new mybookings();
+                mb.setVisible(true);
+                this.dispose(); 
+            }
+        } catch (Exception e) {
+            javax.swing.JOptionPane.showMessageDialog(null, "Cancellation Error: " + e.getMessage());
+        }
+    }
+
+
+    }//GEN-LAST:event_cancelbookingMouseClicked
+
+    private void arMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_arMouseClicked
+ 
+    }//GEN-LAST:event_arMouseClicked
+
+    private void checkinPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_checkinPropertyChange
+     if ("date".equals(evt.getPropertyName())) {
+        calculateTotal();
+    }
+        // TODO add your handling code here:
+    }//GEN-LAST:event_checkinPropertyChange
+
+    private void checkoutPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_checkoutPropertyChange
+      if ("date".equals(evt.getPropertyName())) {
+        calculateTotal();
+    }  // TODO add your handling code here:
+    }//GEN-LAST:event_checkoutPropertyChange
+
+    private void editbookingMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_editbookingMouseClicked
+try {
         config db = new config();
         java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd");
         String strIn = sdf.format(checkin.getDate());
@@ -260,26 +325,7 @@ public void calculateTotal() {
     } catch (Exception e) {
         javax.swing.JOptionPane.showMessageDialog(null, "Update Error: " + e.getMessage());
     }
-      
-
-    }//GEN-LAST:event_confirmbookMouseClicked
-
-    private void arMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_arMouseClicked
- 
-    }//GEN-LAST:event_arMouseClicked
-
-    private void checkinPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_checkinPropertyChange
-     if ("date".equals(evt.getPropertyName())) {
-        calculateTotal();
-    }
-        // TODO add your handling code here:
-    }//GEN-LAST:event_checkinPropertyChange
-
-    private void checkoutPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_checkoutPropertyChange
-      if ("date".equals(evt.getPropertyName())) {
-        calculateTotal();
-    }  // TODO add your handling code here:
-    }//GEN-LAST:event_checkoutPropertyChange
+          }//GEN-LAST:event_editbookingMouseClicked
 
     /**
      * @param args the command line arguments
@@ -319,9 +365,10 @@ public void calculateTotal() {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public javax.swing.JTextField ar;
     private javax.swing.JLabel cancel;
+    private javax.swing.JLabel cancelbooking;
     private com.toedter.calendar.JDateChooser checkin;
     private com.toedter.calendar.JDateChooser checkout;
-    private javax.swing.JLabel confirmbook;
+    private javax.swing.JLabel editbooking;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel15;
@@ -331,6 +378,7 @@ public void calculateTotal() {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel11;
     private javax.swing.JPanel jPanel12;
+    private javax.swing.JPanel jPanel13;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel9;
     public javax.swing.JTextField totalcost;

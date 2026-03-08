@@ -32,30 +32,39 @@ public class mybookings extends javax.swing.JFrame {
         displayMyBookings();
     }
     
-    public void displayMyBookings() {
+   public void displayMyBookings() {
     try {
         config conf = new config();
         session sess = session.getInstance();
-        
-        // Use the Account ID from the current session
         int loggedInId = sess.getAccountId(); 
 
-        // UPDATED SQL:
-        // We link bookings to rooms to get the Room Number.
-        // We filter by account_id which we just saved in bookings.java.
-        String sql = "SELECT b.bookings_id AS 'ID', r.room_number AS 'Room Number', " +
-                     "b.check_in AS 'Check-In', b.check_out AS 'Check-Out', " +
-                     "b.total_night AS 'Nights', b.total_price AS 'Total Price', " +
-                     "b.booking_status AS 'Status' " +
+        // ORDER MATTERS HERE:
+        // Index 0: bookings_id (We will hide this)
+        // Index 1: room_number (Must match "Room No." column)
+        // Index 2: type_name   (Must match "Room Type" column)
+        // Index 3: floor       (Must match "Floor" column)
+        String sql = "SELECT b.bookings_id, " + 
+                     "r.room_number AS 'Floor', " + 
+                     "rt.type_name AS 'Room Type', " + 
+                     "r.floor AS 'Room No.', " +          
+                     "b.check_in AS 'Check-In', " +    
+                     "b.check_out AS 'Check-Out', " +  
+                     "b.total_night AS 'Nights', " +   
+                     "b.total_price AS 'Total Price', " + 
+                     "b.booking_status AS 'Status' " + 
                      "FROM bookings b " +
                      "JOIN rooms r ON b.room_id = r.room_id " +
+                     "JOIN room_type rt ON r.room_type_name = rt.room_type_id " +
                      "WHERE b.account_id = " + loggedInId;
 
-        // Populate the JTable
         conf.displayData(sql, bookingsTable);
 
+        // Hide ID (Index 0)
+        bookingsTable.getColumnModel().getColumn(0).setMinWidth(0);
+        bookingsTable.getColumnModel().getColumn(0).setMaxWidth(0);
+        bookingsTable.getColumnModel().getColumn(0).setWidth(0);
+
     } catch (Exception e) {
-        System.out.println("Error loading bookings: " + e.getMessage());
         javax.swing.JOptionPane.showMessageDialog(null, "Error: " + e.getMessage());
     }
 }
@@ -142,15 +151,20 @@ public class mybookings extends javax.swing.JFrame {
 
         bookingsTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null}
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null}
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4", "Title 5", "Title 6"
+                "Title 1", "Title 2", "Title 3", "Title 4", "Title 5", "Title 6", "Title 7"
             }
         ));
+        bookingsTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                bookingsTableMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(bookingsTable);
 
         jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 170, 930, 400));
@@ -180,18 +194,21 @@ public class mybookings extends javax.swing.JFrame {
     
     if (row != -1) {
         try {
-            // 1. Extract data from the table
+            // Still get ID from column 0 even though it's hidden
             int bId = Integer.parseInt(bookingsTable.getValueAt(row, 0).toString());
-            String roomName = bookingsTable.getValueAt(row, 1).toString();
-            String cin = bookingsTable.getValueAt(row, 2).toString();
-            String cout = bookingsTable.getValueAt(row, 3).toString();
-            int nights = Integer.parseInt(bookingsTable.getValueAt(row, 4).toString());
-            double cost = Double.parseDouble(bookingsTable.getValueAt(row, 5).toString());
-
-            // 2. Open editbookings
-            editbookings edit = new editbookings(bId, roomName, cin, cout, nights, cost);
             
-            // 3. Convert String dates from table to Date objects for the JDateChooser
+            // Extract display info (Room Number at 1, Type at 2, Floor at 3)
+            String roomDisplay = "Room " + bookingsTable.getValueAt(row, 1).toString() + 
+                                 " (" + bookingsTable.getValueAt(row, 2).toString() + ") " +
+                                 "Floor: " + bookingsTable.getValueAt(row, 3).toString();
+            
+            String cin = bookingsTable.getValueAt(row, 4).toString();
+            String cout = bookingsTable.getValueAt(row, 5).toString();
+            int nights = Integer.parseInt(bookingsTable.getValueAt(row, 6).toString());
+            double cost = Double.parseDouble(bookingsTable.getValueAt(row, 7).toString());
+
+            editbookings edit = new editbookings(bId, roomDisplay, cin, cout, nights, cost);
+            
             java.util.Date dateIn = new java.text.SimpleDateFormat("yyyy-MM-dd").parse(cin);
             java.util.Date dateOut = new java.text.SimpleDateFormat("yyyy-MM-dd").parse(cout);
             edit.setDates(dateIn, dateOut);
@@ -200,12 +217,11 @@ public class mybookings extends javax.swing.JFrame {
             this.dispose(); 
             
         } catch (Exception e) {
-            javax.swing.JOptionPane.showMessageDialog(null, "Error parsing booking data: " + e.getMessage());
+            javax.swing.JOptionPane.showMessageDialog(null, "Error: " + e.getMessage());
         }
     } else {
         javax.swing.JOptionPane.showMessageDialog(null, "Please select a booking from the table first!");
     }
-
     }//GEN-LAST:event_jLabel4MouseClicked
 
     private void backMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_backMouseClicked
@@ -223,6 +239,55 @@ public class mybookings extends javax.swing.JFrame {
         back.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         back.setForeground(java.awt.Color.BLUE);
     }//GEN-LAST:event_backMouseExited
+
+    private void bookingsTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bookingsTableMouseClicked
+    int row = bookingsTable.getSelectedRow();
+    
+    if (row == -1) return; 
+
+    try {
+        // According to your SQL in displayMyBookings:
+        // 0:b_id, 1:Floor(Room No), 2:Room Type, 3:Room No(Floor), 
+        // 4:Check-In, 5:Check-Out, 6:Nights, 7:Total Price, 8:Status
+        
+        Object statusObj = bookingsTable.getValueAt(row, 8); 
+        String status = (statusObj != null) ? statusObj.toString() : "";
+
+        // VALIDATION: Only allow 'Booked' status to proceed
+        if (!status.equalsIgnoreCase("Booked")) {
+            if (status.equalsIgnoreCase("Pending") || status.equalsIgnoreCase("Paid")) {
+                javax.swing.JOptionPane.showMessageDialog(null, "Payment is already processed or pending for this booking.");
+            } else {
+                javax.swing.JOptionPane.showMessageDialog(null, "This booking is " + status.toUpperCase() + " and cannot be paid.");
+            }
+            return;
+        }
+
+        // Fetching data for transfer
+        String bID = bookingsTable.getValueAt(row, 0).toString();
+        String roomNo = bookingsTable.getValueAt(row, 3).toString(); // Adjust index if needed
+        String cin = bookingsTable.getValueAt(row, 4).toString();
+        String cout = bookingsTable.getValueAt(row, 5).toString();
+        String nights = bookingsTable.getValueAt(row, 6).toString();
+        String price = bookingsTable.getValueAt(row, 7).toString();
+        
+        // Construct the tableInfo string for the payments header
+        String type = bookingsTable.getValueAt(row, 2).toString();
+        String tableInfo = type + " | Room: " + roomNo;
+
+        // Open payments and pass all 7 arguments
+        payments pay = new payments();
+        pay.importBookingData(bID, roomNo, cin, cout, nights, price, tableInfo);
+        
+        pay.setVisible(true);
+        this.dispose(); 
+
+    } catch (Exception e) {
+        javax.swing.JOptionPane.showMessageDialog(null, "Error selecting booking: " + e.getMessage());
+    }
+
+  // TODO add your handling code here:
+    }//GEN-LAST:event_bookingsTableMouseClicked
 
     /**
      * @param args the command line arguments

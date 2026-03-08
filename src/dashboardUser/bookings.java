@@ -119,10 +119,11 @@ public void calculateTotal() {
         jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 36)); // NOI18N
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("BOOKINGS");
-        jPanel2.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 20, -1, -1));
+        jPanel2.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 420, 100));
 
-        jPanel1.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 360, 100));
+        jPanel1.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 420, 100));
 
         jPanel9.setBackground(new java.awt.Color(204, 204, 204));
         jPanel9.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -173,7 +174,7 @@ public void calculateTotal() {
                 confirmbookMouseClicked(evt);
             }
         });
-        jPanel12.add(confirmbook, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 120, 40));
+        jPanel12.add(confirmbook, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 110, 40));
 
         jPanel9.add(jPanel12, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 280, 120, 40));
 
@@ -191,9 +192,9 @@ public void calculateTotal() {
                 arMouseClicked(evt);
             }
         });
-        jPanel9.add(ar, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 20, 170, 40));
+        jPanel9.add(ar, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 20, 300, 40));
 
-        jPanel1.add(jPanel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 100, 360, 370));
+        jPanel1.add(jPanel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 100, 420, 370));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
