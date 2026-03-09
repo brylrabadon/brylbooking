@@ -241,7 +241,9 @@ public class dashboardstaff extends javax.swing.JFrame {
     }//GEN-LAST:event_booksMouseClicked
 
     private void jLabel3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel3MouseClicked
-
+        managebookings managebook = new managebookings();
+        managebook.setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_jLabel3MouseClicked
 
     /**

@@ -3,23 +3,25 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package dashboardUser;
+package dashboardStaff;
 
 import config.session;
 import dashboardUser.RoomItem;
 import config.config;
+import dashboardUser.mybookings;
 import java.sql.*;
 import javax.swing.JOptionPane;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.text.SimpleDateFormat;
 
-public class bookings extends javax.swing.JFrame {
+ 
+public class addbooking extends javax.swing.JFrame {
 
-   public int selectedRoomId = -1; 
+  public int selectedRoomId = -1; 
     public javax.swing.JTextField ppn;
     
-public bookings() {
+public addbooking() {
     initComponents(); // Always call this first
     
     // 1. Initialize ppn if it's null
@@ -78,10 +80,6 @@ public void calculateTotal() {
     }
 }
 
-
-
-
-
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -91,7 +89,6 @@ public void calculateTotal() {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jPanel9 = new javax.swing.JPanel();
@@ -112,8 +109,6 @@ public void calculateTotal() {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
         jPanel2.setBackground(new java.awt.Color(153, 153, 153));
         jPanel2.setForeground(new java.awt.Color(204, 204, 204));
         jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -122,8 +117,6 @@ public void calculateTotal() {
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("BOOKINGS");
         jPanel2.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 420, 100));
-
-        jPanel1.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 420, 100));
 
         jPanel9.setBackground(new java.awt.Color(204, 204, 204));
         jPanel9.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -194,24 +187,52 @@ public void calculateTotal() {
         });
         jPanel9.add(ar, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 20, 270, 40));
 
-        jPanel1.add(jPanel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 100, 420, 370));
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGap(0, 420, Short.MAX_VALUE)
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createSequentialGroup()
+                    .addGap(0, 0, Short.MAX_VALUE)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, 420, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGap(0, 0, Short.MAX_VALUE)))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGap(0, 470, Short.MAX_VALUE)
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createSequentialGroup()
+                    .addGap(0, 0, Short.MAX_VALUE)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(0, 0, 0)
+                    .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, 370, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(0, 0, Short.MAX_VALUE)))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void cancelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cancelMouseClicked
+        dashboardstaff dash = new dashboardstaff();
+        dash.setVisible(true); // Show the dashboard again
+        this.dispose();          // TODO add your handling code here:
+    }//GEN-LAST:event_cancelMouseClicked
+
+    private void cancelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cancelMouseEntered
+        cancel.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        cancel.setForeground(java.awt.Color.BLUE);        // TODO add your handling code here:
+    }//GEN-LAST:event_cancelMouseEntered
+
+    private void cancelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cancelMouseExited
+        cancel.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        cancel.setForeground(java.awt.Color.BLUE);        // TODO add your handling code here:
+    }//GEN-LAST:event_cancelMouseExited
+
     private void confirmbookMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_confirmbookMouseClicked
-    try {
+  try {
         session sess = session.getInstance();
         int accId = sess.getAccountId();
 
@@ -262,34 +283,17 @@ public void calculateTotal() {
     } catch (Exception e) {
         JOptionPane.showMessageDialog(null, "Booking Error: " + e.getMessage());
     }
-
+       
 
     }//GEN-LAST:event_confirmbookMouseClicked
 
-    private void cancelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cancelMouseClicked
-        dashboardguest dash = new dashboardguest();
-        dash.setVisible(true); // Show the dashboard again
-        this.dispose();          // TODO add your handling code here:
-    }//GEN-LAST:event_cancelMouseClicked
-
-    private void cancelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cancelMouseEntered
-        cancel.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        cancel.setForeground(java.awt.Color.BLUE);        // TODO add your handling code here:
-    }//GEN-LAST:event_cancelMouseEntered
-
-    private void cancelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cancelMouseExited
-        cancel.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        cancel.setForeground(java.awt.Color.BLUE);        // TODO add your handling code here:
-    }//GEN-LAST:event_cancelMouseExited
-
     private void arMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_arMouseClicked
-    // Passing 'this' (the current bookings window) to selectrooms
-    selectrooms sr = new selectrooms(this); 
-    sr.setVisible(true);
-
-  // TODO add your handling code here:
+    selectavailrooms sar = new selectavailrooms();
+    sar.setVisible(true);
+    this.dispose(); // Close current window
+        // TODO add your handling code here:
     }//GEN-LAST:event_arMouseClicked
-
+ 
     /**
      * @param args the command line arguments
      */
@@ -307,20 +311,20 @@ public void calculateTotal() {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(bookings.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(addbooking.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(bookings.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(addbooking.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(bookings.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(addbooking.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(bookings.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(addbooking.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new bookings().setVisible(true);
+                new addbooking().setVisible(true);
             }
         });
     }
@@ -337,7 +341,6 @@ public void calculateTotal() {
     private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel11;
     private javax.swing.JPanel jPanel12;
     private javax.swing.JPanel jPanel2;

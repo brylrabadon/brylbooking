@@ -208,7 +208,7 @@ public void calculateTotal() {
 
         editbooking.setForeground(new java.awt.Color(255, 255, 255));
         editbooking.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        editbooking.setText("Edit  Booking");
+        editbooking.setText("Update Booking");
         editbooking.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 editbookingMouseClicked(evt);

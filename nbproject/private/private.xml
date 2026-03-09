@@ -3,12 +3,10 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/Personal-PC/Documents/Bryl%20Rabadon%20Program/LOANGUI/brylbooking/src/dashboardUser/mybookings.java</file>
-            <file>file:/C:/Users/Personal-PC/Documents/Bryl%20Rabadon%20Program/LOANGUI/brylbooking/src/dashboardUser/editbookings.java</file>
-            <file>file:/C:/Users/Personal-PC/Documents/Bryl%20Rabadon%20Program/LOANGUI/brylbooking/src/dashboardUser/payments.java</file>
-            <file>file:/C:/Users/Personal-PC/Documents/Bryl%20Rabadon%20Program/LOANGUI/brylbooking/src/config/config.java</file>
-            <file>file:/C:/Users/Personal-PC/Documents/Bryl%20Rabadon%20Program/LOANGUI/brylbooking/src/dashboardUser/bookings.java</file>
-            <file>file:/C:/Users/Personal-PC/Documents/Bryl%20Rabadon%20Program/LOANGUI/brylbooking/src/dashboardUser/dashboardguest.java</file>
+            <file>file:/C:/Users/Administrator/OneDrive/Documents/bryl/brylbooking/src/dashboardStaff/dashboardstaff.java</file>
+            <file>file:/C:/Users/Administrator/OneDrive/Documents/bryl/brylbooking/src/dashboardStaff/addbooking.java</file>
+            <file>file:/C:/Users/Administrator/OneDrive/Documents/bryl/brylbooking/src/dashboardStaff/selectavailrooms.java</file>
+            <file>file:/C:/Users/Administrator/OneDrive/Documents/bryl/brylbooking/src/dashboardStaff/managebookings.java</file>
         </group>
     </open-files>
 </project-private>
