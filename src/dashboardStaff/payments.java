@@ -25,42 +25,28 @@ public class payments extends javax.swing.JFrame {
 
 public void displayPayments() {
     try {
-        // Change the path to your actual database file location
-        String url = "jdbc:sqlite:C:\\Users\\Administrator\\OneDrive\\Documents\\bryl\\brylbooking\\booking.db";
+        String url = "jdbc:sqlite:booking.db";
         Connection conn = DriverManager.getConnection(url);
         
-        // Query to fetch all payment data
-        String sql = "SELECT payment_id, bookings_id, amount, payment_method, payment_status, payment_date FROM payments";
+        // Modified SQL: Added account_id and WHERE clause for Pending status
+        String sql = "SELECT payment_id, account_id, bookings_id, amount, payment_method, "
+                   + "payment_status, payment_date FROM payments WHERE payment_status = 'Pending'";
+        
         PreparedStatement pst = conn.prepareStatement(sql);
         ResultSet rs = pst.executeQuery();
         
-        // Option A: If you have rs2xml.jar (DbUtils)
+        // Automatically populates the JTable with the new columns
         paytable.setModel(DbUtils.resultSetToTableModel(rs));
-        
-        /* Option B: If you DON'T have DbUtils, use this loop instead:
-        DefaultTableModel model = (DefaultTableModel) paytable.getModel();
-        model.setRowCount(0); // Clear existing rows
-        while(rs.next()){
-            model.addRow(new Object[]{
-                rs.getInt("payment_id"),
-                rs.getInt("bookings_id"),
-                rs.getDouble("amount"),
-                rs.getString("payment_method"),
-                rs.getString("payment_status"),
-                rs.getString("payment_date")
-            });
-        }
-        */
         
         conn.close();
     } catch (Exception e) {
-        JOptionPane.showMessageDialog(null, "Error connecting to database: " + e.getMessage());
+        JOptionPane.showMessageDialog(null, "Error fetching pending payments: " + e.getMessage());
     }
 }
 
 private void showReceiptWindow(String paymentID) {
     try {
-        Connection conn = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\Administrator\\OneDrive\\Documents\\bryl\\brylbooking\\booking.db");
+        Connection conn = DriverManager.getConnection("jdbc:sqlite:booking.db");
         // We join with bookings table to get more details if needed
         String sql = "SELECT * FROM payments WHERE payment_id = ?";
         PreparedStatement pst = conn.prepareStatement(sql);
@@ -94,6 +80,27 @@ private void showReceiptWindow(String paymentID) {
     }
 }
 
+private void updateStatusToPaid(String paymentID) {
+    try {
+        String url = "jdbc:sqlite:booking.db";
+        Connection conn = DriverManager.getConnection(url);
+        
+        // Update status in database
+        String sql = "UPDATE payments SET payment_status = 'Paid' WHERE payment_id = ?";
+        PreparedStatement pst = conn.prepareStatement(sql);
+        pst.setString(1, paymentID);
+        pst.executeUpdate();
+        
+        // Refresh the table and notify
+        displayPayments(); 
+        JOptionPane.showMessageDialog(this, "Payment Status Updated to PAID. Guest can now view the receipt.");
+        
+        conn.close();
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
+    }
+}
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -103,21 +110,134 @@ private void showReceiptWindow(String paymentID) {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jPanel1 = new javax.swing.JPanel();
+        jPanel3 = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        jPanel2 = new javax.swing.JPanel();
+        jLabel2 = new javax.swing.JLabel();
+        jPanel4 = new javax.swing.JPanel();
+        makearec = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        paytable = new javax.swing.JTable();
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jPanel3.setBackground(new java.awt.Color(153, 153, 153));
+        jPanel3.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 36)); // NOI18N
+        jLabel1.setText("PAYMENTS");
+        jPanel3.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 0, 210, 100));
+
+        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel2.setText("Back");
+        jLabel2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel2MouseClicked(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 50, Short.MAX_VALUE)
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 20, Short.MAX_VALUE)
+        );
+
+        jPanel3.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 10, 50, 20));
+
+        jPanel1.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 830, 100));
+
+        jPanel4.setBackground(new java.awt.Color(204, 204, 204));
+
+        makearec.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        makearec.setText("MAKE A RECEIPT");
+        makearec.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                makearecMouseClicked(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(makearec, javax.swing.GroupLayout.DEFAULT_SIZE, 110, Short.MAX_VALUE)
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addComponent(makearec, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
+        );
+
+        jPanel1.add(jPanel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(710, 110, -1, 40));
+
+        paytable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4", "Title 5", "Title 6"
+            }
+        ));
+        jScrollPane1.setViewportView(paytable);
+
+        jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 160, 830, 390));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 738, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 540, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void makearecMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_makearecMouseClicked
+    int row = paytable.getSelectedRow();
+    if (row == -1) {
+        JOptionPane.showMessageDialog(this, "Please select a payment from the table!");
+        return;
+    }
+
+    // Index 0 is payment_id
+    String pID = paytable.getValueAt(row, 0).toString();
+    // Index 5 is now payment_status because account_id was inserted
+    String status = paytable.getValueAt(row, 5).toString();
+
+    if (status.equalsIgnoreCase("Pending")) {
+        int choice = JOptionPane.showConfirmDialog(this, "Process Payment for ID: " + pID + "?", "Confirm", JOptionPane.YES_NO_OPTION);
+        if (choice == JOptionPane.YES_OPTION) {
+            updateStatusToPaid(pID); 
+            showReceiptWindow(pID);  
+        }
+    } else {
+        showReceiptWindow(pID); 
+    }
+
+
+    }//GEN-LAST:event_makearecMouseClicked
+
+    private void jLabel2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel2MouseClicked
+     dashboardstaff dash = new dashboardstaff();
+    dash.setVisible(true);
+    this.dispose();        // TODO add your handling code here:
+    }//GEN-LAST:event_jLabel2MouseClicked
 
     /**
      * @param args the command line arguments
@@ -155,5 +275,14 @@ private void showReceiptWindow(String paymentID) {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel makearec;
+    private javax.swing.JTable paytable;
     // End of variables declaration//GEN-END:variables
 }

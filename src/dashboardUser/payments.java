@@ -17,9 +17,11 @@ import java.text.SimpleDateFormat;
 public class payments extends javax.swing.JFrame {
 
   String currentBookingID;
+  int currentAccountID;
 
-   public payments() {
+   public payments(int accID) {
     initComponents();
+    this.currentAccountID = accID;
 }
 
 public void importBookingData(String bID, String rNo, String cin, String cout, String nights, String price, String tableInfo) {
@@ -227,44 +229,31 @@ private void setupPaymentMethods() {
     }
     
     config conf = new config();
-    
-    // PREVENT DOUBLE PAYMENT: Check if a payment record already exists for this booking ID
-    try {
-        String checkQuery = "SELECT COUNT(*) FROM payments WHERE bookings_id = '" + currentBookingID + "'";
-        ResultSet rs = conf.getData(checkQuery);
-        if(rs.next() && rs.getInt(1) > 0) {
-            JOptionPane.showMessageDialog(null, "A payment record already exists for this booking.");
-            return;
-        }
-    } catch (SQLException e) {
-        System.err.println("Validation Error: " + e.getMessage());
-    }
-
     String method = pm.getSelectedItem().toString();
+    String amount = jTextField1.getText();
     
-    // 1. Insert Payment Record
-    String payQuery = "INSERT INTO payments (bookings_id, amount, payment_method, payment_status, payment_date) "
-                    + "VALUES (?, ?, ?, 'Pending', datetime('now'))";
+    // SQL query structure. Make sure you insert account_id.
+    String payQuery = "INSERT INTO payments (account_id, bookings_id, amount, payment_method, payment_status, payment_date) "
+                    + "VALUES (?, ?, ?, ?, 'Pending', datetime('now'))";
     
-    // 2. Update Booking Status to 'Pending' 
-    // This removes it from the 'Payable' list in MyBookings because it's no longer 'Booked'
+    // SQL update for booking status
     String updateQuery = "UPDATE bookings SET booking_status = 'Pending' WHERE bookings_id = ?";
     
-    if(conf.executeUpdate(payQuery, currentBookingID, jTextField1.getText(), method) > 0) {
+    // Pass 'currentAccountID' as the FIRST parameter to 'execute'
+    if(conf.executeUpdate(payQuery, currentAccountID, currentBookingID, amount, method) > 0) {
         conf.executeUpdate(updateQuery, currentBookingID);
         JOptionPane.showMessageDialog(null, "Payment Submitted! Status: Pending Staff Approval.");
         
         this.dispose();
         new mybookings().setVisible(true); 
     }
-
-       
+   
     }//GEN-LAST:event_paynowMouseClicked
 
     private void backMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_backMouseClicked
         dashboardguest dash = new dashboardguest();
-        dash.setVisible(true); // Show the dashboard again
-        this.dispose();         // TODO add your handling code here:
+    dash.setVisible(true); 
+    this.dispose();         // TODO add your handling code here:
     }//GEN-LAST:event_backMouseClicked
 
     private void backMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_backMouseEntered
@@ -290,37 +279,17 @@ private void setupPaymentMethods() {
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(payments.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(payments.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(payments.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(payments.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+         public static void main(String args[]) {
+    java.awt.EventQueue.invokeLater(new Runnable() {
+        public void run() {
+            // Change 'new payments()' to 'new payments(0)'
+            new payments(0).setVisible(true); 
         }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new payments().setVisible(true);
-            }
-        });
-    }
+    });
+}
+    
+       
+   
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel back;

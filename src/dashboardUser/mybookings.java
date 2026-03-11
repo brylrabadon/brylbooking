@@ -271,21 +271,27 @@ public class mybookings extends javax.swing.JFrame {
         String nights = bookingsTable.getValueAt(row, 6).toString();
         String price = bookingsTable.getValueAt(row, 7).toString();
         
-        // Construct the tableInfo string for the payments header
-        String type = bookingsTable.getValueAt(row, 2).toString();
-        String tableInfo = type + " | Room: " + roomNo;
 
-        // Open payments and pass all 7 arguments
-        payments pay = new payments();
-        pay.importBookingData(bID, roomNo, cin, cout, nights, price, tableInfo);
-        
-        pay.setVisible(true);
-        this.dispose(); 
+    
+    String type = bookingsTable.getValueAt(row, 2).toString();
+    String tableInfo = type + " | Room: " + roomNo;
 
-    } catch (Exception e) {
-        javax.swing.JOptionPane.showMessageDialog(null, "Error selecting booking: " + e.getMessage());
-    }
+    // 1. Get the current Account ID from the session
+    session sess = session.getInstance();
+    int activeID = sess.getAccountId();
 
+    // 2. FIX: Pass the activeID into the constructor
+    payments pay = new payments(activeID); 
+    
+    // 3. Now import the data
+    pay.importBookingData(bID, roomNo, cin, cout, nights, price, tableInfo);
+    
+    pay.setVisible(true);
+    this.dispose(); 
+
+} catch (Exception e) {
+    javax.swing.JOptionPane.showMessageDialog(null, "Error selecting booking: " + e.getMessage());
+}
   // TODO add your handling code here:
     }//GEN-LAST:event_bookingsTableMouseClicked
 

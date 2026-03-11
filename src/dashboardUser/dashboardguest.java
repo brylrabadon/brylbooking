@@ -51,6 +51,25 @@ public class dashboardguest extends javax.swing.JFrame {
         System.out.println("Error fetching profile: " + e.getMessage());
     }
 }
+   private String getLatestPaidPaymentId() {
+    String pID = "";
+    try {
+        config db = new config();
+        session sess = session.getInstance();
+        
+        // Find the latest payment marked as Paid for this specific guest
+        String query = "SELECT payment_id FROM payments WHERE account_id = " + sess.getAccountId() + 
+                       " AND payment_status = 'Paid' ORDER BY payment_id DESC LIMIT 1";
+        
+        ResultSet rs = db.getData(query);
+        if (rs.next()) {
+            pID = rs.getString("payment_id");
+        }
+    } catch (Exception e) {
+        System.out.println("Error finding payment: " + e.getMessage());
+    }
+    return pID;
+}
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -77,6 +96,8 @@ public class dashboardguest extends javax.swing.JFrame {
         logout = new javax.swing.JLabel();
         jPanel9 = new javax.swing.JPanel();
         books = new javax.swing.JLabel();
+        jPanel5 = new javax.swing.JPanel();
+        jLabel2 = new javax.swing.JLabel();
         welcome_guest = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
 
@@ -122,7 +143,7 @@ public class dashboardguest extends javax.swing.JFrame {
         payments.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         pay.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        pay.setText("Payments");
+        pay.setText("Make A Payment");
         pay.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 payMouseClicked(evt);
@@ -165,7 +186,7 @@ public class dashboardguest extends javax.swing.JFrame {
         });
         jPanel6.add(logout, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 200, 40));
 
-        jPanel8.add(jPanel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 280, 200, 40));
+        jPanel8.add(jPanel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 330, 200, 40));
 
         jPanel9.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
@@ -179,6 +200,19 @@ public class dashboardguest extends javax.swing.JFrame {
         jPanel9.add(books, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 200, 40));
 
         jPanel8.add(jPanel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 130, 200, 40));
+
+        jPanel5.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel2.setText("View Receipt");
+        jLabel2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel2MouseClicked(evt);
+            }
+        });
+        jPanel5.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 200, 40));
+
+        jPanel8.add(jPanel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 280, 200, 40));
 
         jPanel1.add(jPanel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 100, 260, 460));
 
@@ -253,11 +287,39 @@ public class dashboardguest extends javax.swing.JFrame {
     }//GEN-LAST:event_payMouseEntered
 
     private void payMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_payMouseClicked
-      payments pay = new payments();
-      pay.setVisible(true);
-      this.dispose();
+    
+    session sess = session.getInstance();
+    
+    // 2. Get the Account ID
+    int activeID = sess.getAccountId(); 
+    
+    // 3. Pass 'activeID' inside the parentheses
+    payments payFrame = new payments(activeID); 
+    payFrame.setVisible(true);
+    
+    this.dispose();
+
+
+
 // TODO add your handling code here:
     }//GEN-LAST:event_payMouseClicked
+
+    private void jLabel2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel2MouseClicked
+    // 1. Get the latest paid payment ID for this guest
+    String paymentID = getLatestPaidPaymentId();
+
+    // 2. Check if a paid record actually exists
+    if (!paymentID.equals("")) {
+        viewreceipt vr = new viewreceipt();
+        vr.generateReceipt(paymentID); // This calls your receipt generator
+        vr.setVisible(true);
+        this.dispose(); 
+    } else {
+        JOptionPane.showMessageDialog(this, "No 'Paid' receipts found. Please settle your payment first.");
+    }
+
+
+    }//GEN-LAST:event_jLabel2MouseClicked
 
     /**
      * @param args the command line arguments
@@ -298,6 +360,7 @@ public class dashboardguest extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel books;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
@@ -305,6 +368,7 @@ public class dashboardguest extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;

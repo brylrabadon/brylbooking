@@ -48,17 +48,15 @@ public class dashboardstaff extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jPanel8 = new javax.swing.JPanel();
         jPanel7 = new javax.swing.JPanel();
-        jLabel6 = new javax.swing.JLabel();
+        sd = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
-        jLabel3 = new javax.swing.JLabel();
-        payments = new javax.swing.JPanel();
-        pay = new javax.swing.JLabel();
+        mb = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
-        user_profile = new javax.swing.JLabel();
+        sp = new javax.swing.JLabel();
         jPanel6 = new javax.swing.JPanel();
         logout = new javax.swing.JLabel();
         jPanel9 = new javax.swing.JPanel();
-        books = new javax.swing.JLabel();
+        pay = new javax.swing.JLabel();
         welcome_staff = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
 
@@ -82,59 +80,43 @@ public class dashboardstaff extends javax.swing.JFrame {
 
         jPanel7.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel6.setText("Staff Dashboard");
-        jPanel7.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 200, 40));
+        sd.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        sd.setText("Staff Dashboard");
+        jPanel7.add(sd, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 200, 40));
 
         jPanel8.add(jPanel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 30, 200, 40));
 
         jPanel4.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel3.setText("Manage Bookings");
-        jLabel3.addMouseListener(new java.awt.event.MouseAdapter() {
+        mb.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        mb.setText("Manage Bookings");
+        mb.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jLabel3MouseClicked(evt);
+                mbMouseClicked(evt);
             }
         });
-        jPanel4.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 200, 40));
+        jPanel4.add(mb, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 200, 40));
 
         jPanel8.add(jPanel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 80, 200, 40));
 
-        payments.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        pay.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        pay.setText("Check-in/Check-Out");
-        pay.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                payMouseClicked(evt);
-            }
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                payMouseEntered(evt);
-            }
-        });
-        payments.add(pay, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 200, 40));
-
-        jPanel8.add(payments, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 180, 200, 40));
-
         jPanel3.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        user_profile.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        user_profile.setText("Staff Profile");
-        user_profile.addMouseListener(new java.awt.event.MouseAdapter() {
+        sp.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        sp.setText("Staff Profile");
+        sp.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                user_profileMouseClicked(evt);
+                spMouseClicked(evt);
             }
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                user_profileMouseEntered(evt);
+                spMouseEntered(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                user_profileMouseExited(evt);
+                spMouseExited(evt);
             }
         });
-        jPanel3.add(user_profile, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 190, 40));
+        jPanel3.add(sp, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 200, 40));
 
-        jPanel8.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 230, 200, 40));
+        jPanel8.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 180, 200, 40));
 
         jPanel6.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
@@ -145,20 +127,20 @@ public class dashboardstaff extends javax.swing.JFrame {
                 logoutMouseClicked(evt);
             }
         });
-        jPanel6.add(logout, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 190, 40));
+        jPanel6.add(logout, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 200, 40));
 
-        jPanel8.add(jPanel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 280, 200, 40));
+        jPanel8.add(jPanel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 230, 200, 40));
 
         jPanel9.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        books.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        books.setText("Payments");
-        books.addMouseListener(new java.awt.event.MouseAdapter() {
+        pay.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        pay.setText("Payments");
+        pay.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                booksMouseClicked(evt);
+                payMouseClicked(evt);
             }
         });
-        jPanel9.add(books, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 200, 40));
+        jPanel9.add(pay, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 200, 40));
 
         jPanel8.add(jPanel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 130, 200, 40));
 
@@ -212,41 +194,33 @@ public class dashboardstaff extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_logoutMouseClicked
     }
-    private void user_profileMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_user_profileMouseExited
+    private void spMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_spMouseExited
         // Change back to original color (usually white or light blue)
         jPanel3.setBackground(new java.awt.Color(240, 240, 240));         // TODO add your handling code here:
-    }//GEN-LAST:event_user_profileMouseExited
+    }//GEN-LAST:event_spMouseExited
 
-    private void user_profileMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_user_profileMouseEntered
+    private void spMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_spMouseEntered
         // Change to a light grey or your preferred hover color
         jPanel3.setBackground(new java.awt.Color(204, 204, 204));        // TODO add your handling code here:
-    }//GEN-LAST:event_user_profileMouseEntered
+    }//GEN-LAST:event_spMouseEntered
 
-    private void user_profileMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_user_profileMouseClicked
+    private void spMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_spMouseClicked
       staffprofile sp = new staffprofile();
     sp.setVisible(true);
     this.dispose();
-    }//GEN-LAST:event_user_profileMouseClicked
-
-    private void payMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_payMouseEntered
-        // TODO add your handling code here:
-    }//GEN-LAST:event_payMouseEntered
+    }//GEN-LAST:event_spMouseClicked
 
     private void payMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_payMouseClicked
-        // TODO add your handling code here:
-    }//GEN-LAST:event_payMouseClicked
-
-    private void booksMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_booksMouseClicked
       payments pay = new payments();
       pay.setVisible(true);
       this.dispose(); 
-    }//GEN-LAST:event_booksMouseClicked
+    }//GEN-LAST:event_payMouseClicked
 
-    private void jLabel3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel3MouseClicked
+    private void mbMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_mbMouseClicked
         managebookings managebook = new managebookings();
         managebook.setVisible(true);
         this.dispose();
-    }//GEN-LAST:event_jLabel3MouseClicked
+    }//GEN-LAST:event_mbMouseClicked
 
     /**
      * @param args the command line arguments
@@ -285,10 +259,7 @@ public class dashboardstaff extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel books;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
@@ -299,9 +270,10 @@ public class dashboardstaff extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel8;
     private javax.swing.JPanel jPanel9;
     private javax.swing.JLabel logout;
+    private javax.swing.JLabel mb;
     private javax.swing.JLabel pay;
-    private javax.swing.JPanel payments;
-    private javax.swing.JLabel user_profile;
+    private javax.swing.JLabel sd;
+    private javax.swing.JLabel sp;
     private javax.swing.JLabel welcome_staff;
     // End of variables declaration//GEN-END:variables
 }
