@@ -249,7 +249,7 @@
                 <Component class="javax.swing.JLabel" name="books">
                   <Properties>
                     <Property name="horizontalAlignment" type="int" value="0"/>
-                    <Property name="text" type="java.lang.String" value="Proccess Payment"/>
+                    <Property name="text" type="java.lang.String" value="Payments"/>
                   </Properties>
                   <Events>
                     <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="booksMouseClicked"/>

@@ -152,7 +152,7 @@ public class dashboardstaff extends javax.swing.JFrame {
         jPanel9.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         books.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        books.setText("Proccess Payment");
+        books.setText("Payments");
         books.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 booksMouseClicked(evt);
@@ -237,7 +237,9 @@ public class dashboardstaff extends javax.swing.JFrame {
     }//GEN-LAST:event_payMouseClicked
 
     private void booksMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_booksMouseClicked
-        // TODO add your handling code here:
+      payments pay = new payments();
+      pay.setVisible(true);
+      this.dispose(); 
     }//GEN-LAST:event_booksMouseClicked
 
     private void jLabel3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel3MouseClicked

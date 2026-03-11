@@ -5,49 +5,18 @@
  */
 package dashboardStaff;
 
-import javax.swing.table.DefaultTableModel;
-import config.session;
-import config.config;
-import java.sql.*;
-import javax.swing.JOptionPane;
-import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
-import java.text.SimpleDateFormat;
-
-public class managebookings extends javax.swing.JFrame {
+/**
+ *
+ * @author Administrator
+ */
+public class makeAreceipt extends javax.swing.JFrame {
 
     /**
-     * Creates new form managebookings
+     * Creates new form makeAreceipt
      */
-    public managebookings() {
+    public makeAreceipt() {
         initComponents();
-        displayData();
     }
-    
-    public void displayData() {
-    config db = new config();
-    String searchTerm = searchfield.getText();
-    
-    // SQL JOIN: Connects 'account_id' from both tables to fetch Guest Names
-    String sql = "SELECT a.account_id AS 'Booking ID', " +
-                 "a.first_name AS 'First Name', " +
-                 "a.last_name AS 'Last Name', " +
-                 "b.check_in AS 'Check-In', " +
-                 "b.check_out AS 'Check-Out', " +
-                 "b.room_id AS 'Room #', " +
-                 "b.booking_status AS 'Status' " + // Matches your DB column name
-                 "FROM bookings b " +
-                 "JOIN accounts a ON b.account_id = a.account_id " +
-                 "WHERE a.first_name LIKE ? " +
-                 "OR a.last_name LIKE ? " +
-                 "OR b.booking_status LIKE ? " +
-                 "OR b.bookings_id LIKE ?";
-
-    String search = "%" + searchTerm + "%";
-    
-    // This uses your config class to populate the JTable
-    db.displayData(sql, jTable1, search, search, search, search);
-}
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -64,11 +33,11 @@ public class managebookings extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 738, Short.MAX_VALUE)
+            .addGap(0, 400, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 540, Short.MAX_VALUE)
+            .addGap(0, 300, Short.MAX_VALUE)
         );
 
         pack();
@@ -91,20 +60,20 @@ public class managebookings extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(managebookings.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(makeAreceipt.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(managebookings.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(makeAreceipt.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(managebookings.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(makeAreceipt.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(managebookings.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(makeAreceipt.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new managebookings().setVisible(true);
+                new makeAreceipt().setVisible(true);
             }
         });
     }
