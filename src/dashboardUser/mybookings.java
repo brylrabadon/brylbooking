@@ -15,20 +15,35 @@ import javax.swing.table.DefaultTableModel;
  */
 public class mybookings extends javax.swing.JFrame {
 
-    /**
-     * Creates new form mybookings
-     */
-    public mybookings() {
-         session sess = session.getInstance();
+    private int accID; // Global variable to store the passed ID
 
-    if (sess.getAccountId() == 0) {
-        javax.swing.JOptionPane.showMessageDialog(null, "Required to Log in!");
-        main.login loginForm = new main.login();
-        loginForm.setVisible(true);
-        this.dispose(); 
-        return; 
-    }
+    // Updated Constructor to accept account ID
+    public mybookings(int id) {
         initComponents();
+        this.accID = id; 
+        
+        // Safety check: if somehow ID is 0, try to get from session
+        if (this.accID == 0) {
+            session sess = session.getInstance();
+            this.accID = sess.getAccountId();
+        }
+
+        // Redirect to login if still 0
+        if (this.accID == 0) {
+            javax.swing.JOptionPane.showMessageDialog(null, "Required to Log in!");
+            new main.login().setVisible(true);
+            this.dispose();
+            return;
+        }
+
+        displayMyBookings();
+    }
+
+    // Keep the default constructor for NetBeans GUI builder support
+    public mybookings() {
+        initComponents();
+        session sess = session.getInstance();
+        this.accID = sess.getAccountId();
         displayMyBookings();
     }
     
@@ -151,13 +166,13 @@ public class mybookings extends javax.swing.JFrame {
 
         bookingsTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null}
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4", "Title 5", "Title 6", "Title 7"
+                "Title 1", "Title 2", "Title 3", "Title 4", "Title 5", "Title 6", "Title 7", "Title 8"
             }
         ));
         bookingsTable.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -241,58 +256,7 @@ public class mybookings extends javax.swing.JFrame {
     }//GEN-LAST:event_backMouseExited
 
     private void bookingsTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bookingsTableMouseClicked
-    int row = bookingsTable.getSelectedRow();
-    
-    if (row == -1) return; 
-
-    try {
-        // According to your SQL in displayMyBookings:
-        // 0:b_id, 1:Floor(Room No), 2:Room Type, 3:Room No(Floor), 
-        // 4:Check-In, 5:Check-Out, 6:Nights, 7:Total Price, 8:Status
-        
-        Object statusObj = bookingsTable.getValueAt(row, 8); 
-        String status = (statusObj != null) ? statusObj.toString() : "";
-
-        // VALIDATION: Only allow 'Booked' status to proceed
-        if (!status.equalsIgnoreCase("Booked")) {
-            if (status.equalsIgnoreCase("Pending") || status.equalsIgnoreCase("Paid")) {
-                javax.swing.JOptionPane.showMessageDialog(null, "Payment is already processed or pending for this booking.");
-            } else {
-                javax.swing.JOptionPane.showMessageDialog(null, "This booking is " + status.toUpperCase() + " and cannot be paid.");
-            }
-            return;
-        }
-
-        // Fetching data for transfer
-        String bID = bookingsTable.getValueAt(row, 0).toString();
-        String roomNo = bookingsTable.getValueAt(row, 3).toString(); // Adjust index if needed
-        String cin = bookingsTable.getValueAt(row, 4).toString();
-        String cout = bookingsTable.getValueAt(row, 5).toString();
-        String nights = bookingsTable.getValueAt(row, 6).toString();
-        String price = bookingsTable.getValueAt(row, 7).toString();
-        
-
-    
-    String type = bookingsTable.getValueAt(row, 2).toString();
-    String tableInfo = type + " | Room: " + roomNo;
-
-    // 1. Get the current Account ID from the session
-    session sess = session.getInstance();
-    int activeID = sess.getAccountId();
-
-    // 2. FIX: Pass the activeID into the constructor
-    payments pay = new payments(activeID); 
-    
-    // 3. Now import the data
-    pay.importBookingData(bID, roomNo, cin, cout, nights, price, tableInfo);
-    
-    pay.setVisible(true);
-    this.dispose(); 
-
-} catch (Exception e) {
-    javax.swing.JOptionPane.showMessageDialog(null, "Error selecting booking: " + e.getMessage());
-}
-  // TODO add your handling code here:
+   
     }//GEN-LAST:event_bookingsTableMouseClicked
 
     /**

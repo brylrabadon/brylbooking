@@ -223,31 +223,56 @@ private void setupPaymentMethods() {
     }//GEN-LAST:event_pmActionPerformed
 
     private void paynowMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_paynowMouseClicked
+    // 1. Basic Validation: Ensure a booking is selected
     if(currentBookingID == null) {
-        JOptionPane.showMessageDialog(null, "Please select a booking first!");
+        JOptionPane.showMessageDialog(null, "Please select a booking from the table first!");
         return;
     }
-    
+
+    // 2. ComboBox Validation: Ensure a payment method is selected
+    // Note: If your first item is "Select Method", change the index check to 0
+    // Inside paynowMouseClicked
+String method = pm.getSelectedItem().toString();
+
+if (method.equals("-- Select Payment Method --")) {
+    JOptionPane.showMessageDialog(null, "Please select a valid payment method before proceeding.");
+    return;
+}
+
     config conf = new config();
-    String method = pm.getSelectedItem().toString();
     String amount = jTextField1.getText();
     
-    // SQL query structure. Make sure you insert account_id.
+    // 3. Database Validation: Check for double payment
+    try {
+        String checkQuery = "SELECT COUNT(*) FROM payments WHERE bookings_id = '" + currentBookingID + "'";
+        ResultSet rs = conf.getData(checkQuery);
+        if (rs.next() && rs.getInt(1) > 0) {
+            JOptionPane.showMessageDialog(null, "A payment for this booking has already been submitted.");
+            return; 
+        }
+    } catch (SQLException e) {
+        System.err.println("Validation Error: " + e.getMessage());
+    }
+
+    // 4. SQL Queries
     String payQuery = "INSERT INTO payments (account_id, bookings_id, amount, payment_method, payment_status, payment_date) "
                     + "VALUES (?, ?, ?, ?, 'Pending', datetime('now'))";
     
-    // SQL update for booking status
-    String updateQuery = "UPDATE bookings SET booking_status = 'Pending' WHERE bookings_id = ?";
+    String updateQuery = "UPDATE bookings SET booking_status = 'Booked' WHERE bookings_id = ?";
     
-    // Pass 'currentAccountID' as the FIRST parameter to 'execute'
+    // 5. Execution
+    // The 'method' variable here comes directly from your JComboBox (pm)
     if(conf.executeUpdate(payQuery, currentAccountID, currentBookingID, amount, method) > 0) {
         conf.executeUpdate(updateQuery, currentBookingID);
+        
         JOptionPane.showMessageDialog(null, "Payment Submitted! Status: Pending Staff Approval.");
         
         this.dispose();
-        new mybookings().setVisible(true); 
+        new mybookings(currentAccountID).setVisible(true); 
+    } else {
+        JOptionPane.showMessageDialog(null, "Transaction failed. Please check your connection.");
     }
-   
+
     }//GEN-LAST:event_paynowMouseClicked
 
     private void backMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_backMouseClicked
@@ -271,9 +296,10 @@ private void setupPaymentMethods() {
     }//GEN-LAST:event_tcActionPerformed
 
     private void paymentstableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_paymentstableMouseClicked
-     mybookings mybook = new mybookings();       // TODO add your handling code here:
-     mybook.setVisible(true);
-     this.dispose();
+    selectpay sel = new selectpay(this.currentAccountID); 
+    sel.setVisible(true);
+    this.dispose();
+
     }//GEN-LAST:event_paymentstableMouseClicked
 
     /**

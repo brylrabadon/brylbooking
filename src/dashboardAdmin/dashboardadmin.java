@@ -29,32 +29,32 @@ public class dashboardadmin extends javax.swing.JFrame {
     try {
         java.sql.ResultSet rs;
 
-        // 1. Get Total Bookings from 'bookings' table
+        // 1. Get Total Bookings
         rs = conf.getData("SELECT COUNT(*) FROM bookings");
         if(rs.next()){
             jLabel4.setText("Total Bookings: " + rs.getInt(1));
         }
 
-        // 2. Get Total Revenue using 'total_price' from 'bookings' table
-        // Based on your database image, price is stored in the bookings table
+        // 2. Get Total Revenue
         rs = conf.getData("SELECT SUM(total_price) FROM bookings");
         if(rs.next()){
             double revenue = rs.getDouble(1);
             jLabel6.setText("Revenue: ₱" + String.format("%.2f", revenue));
         }
 
-        // 3. Get Active Status (Guests who have 'Booked' but not 'Cancelled')
-        // Based on your database constraint: 'Booked' or 'Cancelled'
+        // 3. Get Active Status
         rs = conf.getData("SELECT COUNT(*) FROM bookings WHERE booking_status = 'Booked'");
         if(rs.next()){
             jLabel8.setText("Active: " + rs.getInt(1));
         }
 
-        // 4. Populate the JTable with specific columns from your schema
-        // Joins with accounts might be needed later for guest names, 
-        // but for now, we'll use account_id as requested
-        String query = "SELECT bookings_id AS 'Booking ID', account_id AS 'Guest ID', "
-                     + "check_in AS 'Check-In', booking_status AS 'Status' FROM bookings";
+        // 4. UPDATED: Fetching data including Total Price for the JTable
+        String query = "SELECT bookings_id AS 'Booking ID', "
+                     + "account_id AS 'Guest ID', "
+                     + "check_in AS 'Check-In', "
+                     + "total_price AS 'Total Price', " // Added this column
+                     + "booking_status AS 'Status' FROM bookings";
+        
         rs = conf.getData(query);
         jTable1.setModel(net.proteanit.sql.DbUtils.resultSetToTableModel(rs));
 
@@ -242,13 +242,13 @@ public class dashboardadmin extends javax.swing.JFrame {
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null}
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
             },
             new String [] {
-                "Booking ID", "Guest Name", "Check-In"
+                "Booking ID", "Title 2", "Title 3", "Title 4", "Title 5"
             }
         ));
         jScrollPane1.setViewportView(jTable1);

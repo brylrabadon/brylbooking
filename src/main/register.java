@@ -42,7 +42,6 @@ public class register extends javax.swing.JFrame {
         jLabel6 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
-        jLabel8 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
         pass = new javax.swing.JTextField();
@@ -50,6 +49,7 @@ public class register extends javax.swing.JFrame {
         email = new javax.swing.JTextField();
         contact = new javax.swing.JTextField();
         uname = new javax.swing.JTextField();
+        jLabel11 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -107,9 +107,6 @@ public class register extends javax.swing.JFrame {
 
         jPanel2.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 450, 110, 40));
 
-        jLabel8.setText("Valid ID:");
-        jPanel2.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 400, -1, -1));
-
         jLabel9.setText("Last Name:");
         jPanel2.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 110, 70, -1));
 
@@ -151,6 +148,15 @@ public class register extends javax.swing.JFrame {
         });
         jPanel2.add(uname, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 290, 240, 30));
 
+        jLabel11.setFont(new java.awt.Font("Tahoma", 1, 13)); // NOI18N
+        jLabel11.setText("Already Have A Account? Log in now!");
+        jLabel11.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel11MouseClicked(evt);
+            }
+        });
+        jPanel2.add(jLabel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 400, -1, 30));
+
         jPanel4.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 0, 510, 580));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -184,9 +190,32 @@ public class register extends javax.swing.JFrame {
     String user = uname.getText().trim();
     String rawPassword = pass.getText().trim();
 
-    // 2. Validation
+    // 2. Comprehensive Validation
+    
+    // Check if any field is empty
     if(first.isEmpty() || last.isEmpty() || em.isEmpty() || cont.isEmpty() || user.isEmpty() || rawPassword.isEmpty()) {
         JOptionPane.showMessageDialog(this, "All fields are required!");
+        return;
+    }
+    
+    // Validate Email Format using Regex
+    if (!em.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
+        JOptionPane.showMessageDialog(this, "Please enter a valid email address!");
+        return;
+    }
+    
+    // Validate Contact Number (must be numeric and e.g., 11 digits)
+    if (!cont.matches("\\d+")) {
+        JOptionPane.showMessageDialog(this, "Contact number must contain only digits!");
+        return;
+    } else if (cont.length() < 10 || cont.length() > 13) {
+        JOptionPane.showMessageDialog(this, "Please enter a valid contact number (10-13 digits)!");
+        return;
+    }
+    
+    // Validate Password Length (Security best practice)
+    if (rawPassword.length() < 8) {
+        JOptionPane.showMessageDialog(this, "Password must be at least 8 characters long!");
         return;
     }
 
@@ -204,7 +233,6 @@ public class register extends javax.swing.JFrame {
         String hashedPassword = passwordhashed.hashPassword(rawPassword);
 
         // 5. Single Insert into 'accounts' table 
-        // Matches columns: first_name, last_name, email, contact, username, password, role, account_status
         String sqlAccount = "INSERT INTO accounts (first_name, last_name, email, contact, username, password, role, account_status) "
                           + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         
@@ -219,7 +247,7 @@ public class register extends javax.swing.JFrame {
     } catch (Exception e) {
         JOptionPane.showMessageDialog(this, "Database Error: " + e.getMessage());
     }
-    
+
     }//GEN-LAST:event_jLabel4MouseClicked
 
     private void passActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_passActionPerformed
@@ -241,6 +269,12 @@ public class register extends javax.swing.JFrame {
     private void unameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_unameActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_unameActionPerformed
+
+    private void jLabel11MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel11MouseClicked
+       login log = new login();
+       log.setVisible(true);
+       this.dispose();// TODO add your handling code here:
+    }//GEN-LAST:event_jLabel11MouseClicked
 
     /**
      * @param args the command line arguments
@@ -283,13 +317,13 @@ public class register extends javax.swing.JFrame {
     private javax.swing.JTextField fname;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;

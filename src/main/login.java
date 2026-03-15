@@ -137,33 +137,53 @@ public class login extends javax.swing.JFrame {
     }//GEN-LAST:event_jLabel4MouseClicked
 
     private void jLabel3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel3MouseClicked
+    // 1. Collect and trim data
     String user = loginuser.getText().trim();
     String rawPass = loginpass.getText().trim();
 
-    if(user.isEmpty() || rawPass.isEmpty()){
-        JOptionPane.showMessageDialog(null, "Please fill in all fields!");
+    // 2. FIELD VALIDATION
+    // Check if fields are empty
+    if(user.isEmpty() && rawPass.isEmpty()){
+        JOptionPane.showMessageDialog(null, "Please enter your Username and Password!");
+        return;
+    } 
+    
+    if(user.isEmpty()){
+        JOptionPane.showMessageDialog(null, "Username field is empty!");
+        return;
+    }
+    
+    if(rawPass.isEmpty()){
+        JOptionPane.showMessageDialog(null, "Password field is empty!");
         return;
     }
 
+    // Optional: Basic length check (matches your registration logic)
+    if(rawPass.length() < 8){
+        JOptionPane.showMessageDialog(null, "Invalid Password length. Please try again.");
+        return;
+    }
+
+    // 3. DATABASE AUTHENTICATION
     try {
         config db = new config();
         String hashedPass = passwordhashed.hashPassword(rawPass);
         
-        // 1. USE PARAMETERS (?) TO PREVENT SQL INJECTION
+        // Use parameters (?) to prevent SQL Injection
         String query = "SELECT * FROM accounts WHERE username = ? AND password = ?";
         
-        // 2. FETCH DATA (Using our new refactored getData that closes the connection)
         java.sql.ResultSet rs = db.getData(query, user, hashedPass);
         
         if (rs != null && rs.next()) {
             String status = rs.getString("account_status");
             
+            // Check if account is Active
             if (!status.equalsIgnoreCase("Active")) {
                 JOptionPane.showMessageDialog(null, "This account is " + status + ". Please contact support.");
                 return;
             }
 
-            // 3. SET SESSION DATA
+            // SET SESSION DATA
             session sess = session.getInstance();
             sess.setAccountId(rs.getInt("account_id")); 
             sess.setUsername(rs.getString("username"));
@@ -173,9 +193,9 @@ public class login extends javax.swing.JFrame {
             String role = rs.getString("role");
             JOptionPane.showMessageDialog(null, "Login Success! Welcome, " + rs.getString("first_name"));
             
-            // 4. REDIRECT BASED ON ROLE
-            this.dispose(); // Close login first to free up resources
+            this.dispose(); // Close login window
             
+            // REDIRECT BASED ON ROLE
             if (role.equalsIgnoreCase("Admin")) {
                 new dashboardAdmin.dashboardadmin().setVisible(true);
             } 
@@ -190,17 +210,14 @@ public class login extends javax.swing.JFrame {
             }
             
         } else {
+            // Generic message for security (don't tell them which one was wrong)
             JOptionPane.showMessageDialog(null, "Invalid Username or Password!");
         }
-        
-        // NO NEED TO MANUALLY CLOSE rs HERE - CachedRowSet handled the DB connection!
         
     } catch (Exception e) {
         JOptionPane.showMessageDialog(null, "Login Error: " + e.getMessage());
         e.printStackTrace();
     }
-
-
 
     }//GEN-LAST:event_jLabel3MouseClicked
 

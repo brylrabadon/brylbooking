@@ -35,17 +35,15 @@ public class managebookings extends javax.swing.JFrame {
                  "b.check_in AS 'Check-In', " +
                  "b.check_out AS 'Check-Out', " +
                  "b.room_id AS 'Room #', " +
-                 "b.booking_status AS 'Status' " + // Matches your DB column name
+                 "b.booking_status AS 'Status' " +
                  "FROM bookings b " +
                  "JOIN accounts a ON b.account_id = a.account_id " +
                  "WHERE a.first_name LIKE ? " +
                  "OR a.last_name LIKE ? " +
                  "OR b.booking_status LIKE ? " +
-                 "OR b.bookings_id LIKE ?";
+                 "OR b.bookings_id LIKE ?"; // Now matches the selected ID
 
     String search = "%" + searchTerm + "%";
-    
-    // This uses your config class to populate the JTable
     db.displayData(sql, jTable1, search, search, search, search);
 }
 
@@ -136,6 +134,11 @@ public class managebookings extends javax.swing.JFrame {
 
         jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel4.setText("DELETE");
+        jLabel4.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel4MouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
@@ -156,6 +159,11 @@ public class managebookings extends javax.swing.JFrame {
 
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel2.setText("EDIT");
+        jLabel2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel2MouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -177,7 +185,7 @@ public class managebookings extends javax.swing.JFrame {
                 searchfieldKeyReleased(evt);
             }
         });
-        jPanel1.add(searchfield, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 110, 160, 40));
+        jPanel1.add(searchfield, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 110, 200, 40));
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -227,6 +235,71 @@ public class managebookings extends javax.swing.JFrame {
     this.dispose();// TODO add your handling code here:
     }//GEN-LAST:event_jLabel3MouseClicked
 
+    private void jLabel2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel2MouseClicked
+    int row = jTable1.getSelectedRow();
+    if (row == -1) {
+        JOptionPane.showMessageDialog(this, "Please select a booking to edit!");
+        return;
+    }
+
+    editbooking eb = new editbooking();
+    
+    // Pass IDs and Room Number
+    eb.bookingID = jTable1.getValueAt(row, 0).toString(); 
+    eb.editar.setText(jTable1.getValueAt(row, 5).toString()); 
+    
+    try {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        // Get dates from columns 3 and 4
+        java.util.Date dIn = sdf.parse(jTable1.getValueAt(row, 3).toString());
+        java.util.Date dOut = sdf.parse(jTable1.getValueAt(row, 4).toString());
+        
+        // Use the setters we just created
+        eb.setCheckInDate(dIn);  
+        eb.setCheckOutDate(dOut);
+        
+        // Refresh the nights and cost on the edit screen
+        eb.calculateTotals(); 
+    } catch (Exception e) {
+        System.out.println("Date Load Error: " + e.getMessage());
+    }
+
+    eb.setVisible(true);
+    this.dispose();
+
+    }//GEN-LAST:event_jLabel2MouseClicked
+
+    private void jLabel4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel4MouseClicked
+    int row = jTable1.getSelectedRow();
+    
+    if (row == -1) {
+        JOptionPane.showMessageDialog(this, "Please select a booking to delete.");
+        return;
+    }
+
+    // Get Booking ID from column 0
+    String bookingID = jTable1.getValueAt(row, 0).toString();
+
+    int confirm = JOptionPane.showConfirmDialog(null, 
+            "Are you sure you want to delete Booking ID: " + bookingID + "?", 
+            "Delete Confirmation", JOptionPane.YES_NO_OPTION);
+
+    if (confirm == JOptionPane.YES_OPTION) {
+        config db = new config();
+        // Use the deleteData method from your config class
+        String sql = "DELETE FROM bookings WHERE bookings_id = ?";
+        int result = db.deleteData(sql, bookingID);
+
+        if (result > 0) {
+            JOptionPane.showMessageDialog(this, "Booking deleted successfully!");
+            displayData(); // Refresh the table
+        } else {
+            JOptionPane.showMessageDialog(this, "Failed to delete the record.");
+        }
+    }
+
+    }//GEN-LAST:event_jLabel4MouseClicked
+
     /**
      * @param args the command line arguments
      */
@@ -264,9 +337,6 @@ public class managebookings extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel addbooking;
-    private javax.swing.JLabel back;
-    private javax.swing.JLabel back1;
-    private javax.swing.JLabel back2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -276,12 +346,10 @@ public class managebookings extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
-    private javax.swing.JPanel jPanel6;
-    private javax.swing.JPanel jPanel7;
-    private javax.swing.JPanel jPanel8;
     private javax.swing.JPanel jPanel9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
     private javax.swing.JTextField searchfield;
     // End of variables declaration//GEN-END:variables
 }
+
