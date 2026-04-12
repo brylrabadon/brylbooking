@@ -23,6 +23,28 @@ public class dashboardadmin extends javax.swing.JFrame {
     initComponents();
     displayData();
     admin_user.setText("Welcome, " + sess.getUsername());
+
+    // Wire up Reprint Receipt button click
+    jLabel5.addMouseListener(new java.awt.event.MouseAdapter() {
+        public void mouseClicked(java.awt.event.MouseEvent evt) {
+            reprintReceiptClicked();
+        }
+        public void mouseEntered(java.awt.event.MouseEvent evt) {
+            jLabel5.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        }
+        public void mouseExited(java.awt.event.MouseEvent evt) {
+            jLabel5.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        }
+    });
+
+    // Also allow double-click on table row to reprint
+    jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
+        public void mouseClicked(java.awt.event.MouseEvent evt) {
+            if (evt.getClickCount() == 2) {
+                reprintReceiptClicked();
+            }
+        }
+    });
 }
     public void displayData() {
     config conf = new config(); 
@@ -48,12 +70,15 @@ public class dashboardadmin extends javax.swing.JFrame {
             jLabel8.setText("Active: " + rs.getInt(1));
         }
 
-        // 4. UPDATED: Fetching data including Total Price for the JTable
-        String query = "SELECT bookings_id AS 'Booking ID', "
-                     + "account_id AS 'Guest ID', "
-                     + "check_in AS 'Check-In', "
-                     + "total_price AS 'Total Price', " // Added this column
-                     + "booking_status AS 'Status' FROM bookings";
+        // 4. Fetch bookings with payment status joined from payments table
+        String query = "SELECT b.bookings_id AS 'Booking ID', "
+                     + "b.account_id AS 'Guest ID', "
+                     + "b.check_in AS 'Check-In', "
+                     + "b.total_price AS 'Total Price', "
+                     + "b.booking_status AS 'Status', "
+                     + "COALESCE(p.payment_status, 'No Payment') AS 'Payment Status' "
+                     + "FROM bookings b "
+                     + "LEFT JOIN payments p ON b.bookings_id = p.bookings_id";
         
         rs = conf.getData(query);
         jTable1.setModel(net.proteanit.sql.DbUtils.resultSetToTableModel(rs));
@@ -95,6 +120,8 @@ public class dashboardadmin extends javax.swing.JFrame {
         jLabel6 = new javax.swing.JLabel();
         jPanel9 = new javax.swing.JPanel();
         jLabel8 = new javax.swing.JLabel();
+        jPanel7 = new javax.swing.JPanel();
+        jLabel5 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         jPanel10 = new javax.swing.JPanel();
@@ -106,10 +133,10 @@ public class dashboardadmin extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jPanel1.setBackground(new java.awt.Color(102, 102, 102));
+        jPanel1.setBackground(new java.awt.Color(102, 153, 255));
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jPanel2.setBackground(new java.awt.Color(153, 153, 153));
+        jPanel2.setBackground(new java.awt.Color(102, 153, 255));
         jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 36)); // NOI18N
@@ -163,14 +190,14 @@ public class dashboardadmin extends javax.swing.JFrame {
 
         jPanel1.add(jPanel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 220, 200, 40));
 
-        jPanel12.setBackground(new java.awt.Color(204, 204, 204));
+        jPanel12.setBackground(new java.awt.Color(51, 204, 255));
         jPanel12.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         admin_user.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         admin_user.setText("Welcome, adminuser");
         jPanel12.add(admin_user, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 200, 30));
 
-        panelStats.setBackground(new java.awt.Color(153, 153, 153));
+        panelStats.setBackground(new java.awt.Color(102, 255, 255));
 
         jLabel4.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
         jLabel4.setText("Total Bookings");
@@ -238,17 +265,25 @@ public class dashboardadmin extends javax.swing.JFrame {
 
         panelStats.add(jPanel9);
 
+        jPanel7.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jLabel5.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
+        jLabel5.setText("Reprint Receipt");
+        jPanel7.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, 40));
+
+        panelStats.add(jPanel7);
+
         jPanel12.add(panelStats, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 40, 690, 110));
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null}
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null}
             },
             new String [] {
-                "Booking ID", "Title 2", "Title 3", "Title 4", "Title 5"
+                "Booking ID", "Title 2", "Title 3", "Title 4", "Title 5", "Title 6"
             }
         ));
         jScrollPane1.setViewportView(jTable1);
@@ -378,6 +413,36 @@ public class dashboardadmin extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jLabel2MouseClicked
 
+    // Reprint receipt handler — called when "Reprint Receipt" label is clicked
+    private void reprintReceiptClicked() {
+        int row = jTable1.getSelectedRow();
+        if (row == -1) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Please select a booking from the table first.");
+            return;
+        }
+
+        // Column 5 is "Payment Status" (index 5)
+        String paymentStatus = jTable1.getValueAt(row, 5) != null
+                ? jTable1.getValueAt(row, 5).toString()
+                : "No Payment";
+
+        if (paymentStatus.equalsIgnoreCase("Paid")) {
+            // Get the booking ID from column 0
+            String bookingId = jTable1.getValueAt(row, 0).toString();
+            dashboardUser.viewreceipt receipt = new dashboardUser.viewreceipt(bookingId);
+            receipt.setVisible(true);
+            this.dispose();
+        } else if (paymentStatus.equalsIgnoreCase("Pending")) {
+            javax.swing.JOptionPane.showMessageDialog(this,
+                "Payment is still PENDING. Receipt can only be reprinted once payment is confirmed as PAID.",
+                "Payment Pending", javax.swing.JOptionPane.WARNING_MESSAGE);
+        } else {
+            javax.swing.JOptionPane.showMessageDialog(this,
+                "No payment found for this booking. Receipt cannot be generated.",
+                "No Payment", javax.swing.JOptionPane.WARNING_MESSAGE);
+        }
+    }
+
     /**
      * @param args the command line arguments
      */
@@ -399,6 +464,7 @@ public static void main(String args[]) {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel1;
@@ -412,6 +478,7 @@ public static void main(String args[]) {
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
+    private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;

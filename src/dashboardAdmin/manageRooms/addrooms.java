@@ -69,7 +69,7 @@ public void setRoomTypeData(String typeName, String price) {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jPanel1.setBackground(new java.awt.Color(204, 204, 204));
+        jPanel1.setBackground(new java.awt.Color(102, 153, 255));
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         addrooms.setFont(new java.awt.Font("Tahoma", 1, 36)); // NOI18N

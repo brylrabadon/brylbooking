@@ -14,11 +14,17 @@ import net.proteanit.sql.DbUtils;
 
 public class viewreceipt extends javax.swing.JFrame {
 
-    /**
-     * Creates new form viewreceipt
-     */
+    private boolean fromAdmin = false;
+
     public viewreceipt() {
         initComponents();
+    }
+
+    // Constructor for reprinting from admin — accepts a booking ID
+    public viewreceipt(String bookingId) {
+        initComponents();
+        this.fromAdmin = true;
+        generateReceiptByBookingId(bookingId);
     }
     
     public void generateReceipt(String paymentID) {
@@ -27,7 +33,7 @@ public class viewreceipt extends javax.swing.JFrame {
         Connection conn = DriverManager.getConnection(url);
         
         // Fetch detailed info joining accounts, bookings, and payments
-        String sql = "SELECT a.first_name, a.last_name, p.amount, p.payment_method, p.payment_date, p.bookings_id " +
+        String sql = "SELECT a.first_name, a.last_name, p.amount, p.payment_method, p.payment_date, p.bookings_id, p.payment_id " +
                      "FROM payments p " +
                      "JOIN bookings b ON p.bookings_id = b.bookings_id " +
                      "JOIN accounts a ON b.account_id = a.account_id " +
@@ -38,35 +44,63 @@ public class viewreceipt extends javax.swing.JFrame {
         ResultSet rs = pst.executeQuery();
 
         if (rs.next()) {
-            String fullName = rs.getString("first_name") + " " + rs.getString("last_name");
-            
-            String receiptText = 
-                "==========================================\n" +
-                "            BRYL HOTEL BOOKING            \n" +
-                "         Official Payment Receipt         \n" +
-                "==========================================\n" +
-                "Date: " + rs.getString("payment_date") + "\n" +
-                "Receipt No: " + paymentID + "\n" +
-                "Guest Name: " + fullName + "\n" +
-                "Booking ID: " + rs.getString("bookings_id") + "\n" +
-                "------------------------------------------\n" +
-                "Description                Amount         \n" +
-                "Hotel Room Booking         PHP " + rs.getString("amount") + "\n" +
-                "------------------------------------------\n" +
-                "TOTAL PAID:                PHP " + rs.getString("amount") + "\n" +
-                "Payment Method:            " + rs.getString("payment_method") + "\n" +
-                "Status:                    OFFICIALLY PAID\n" +
-                "==========================================\n" +
-                "       Thank you for choosing BrylHotel!  \n" +
-                "==========================================";
-
-            receiptPane.setText(receiptText);
+            buildReceiptText(rs);
         }
         conn.close();
     } catch (Exception e) {
         JOptionPane.showMessageDialog(null, e);
     }
 }
+
+    public void generateReceiptByBookingId(String bookingId) {
+    try {
+        String url = "jdbc:sqlite:booking.db";
+        Connection conn = DriverManager.getConnection(url);
+        
+        String sql = "SELECT a.first_name, a.last_name, p.amount, p.payment_method, p.payment_date, p.bookings_id, p.payment_id " +
+                     "FROM payments p " +
+                     "JOIN bookings b ON p.bookings_id = b.bookings_id " +
+                     "JOIN accounts a ON b.account_id = a.account_id " +
+                     "WHERE p.bookings_id = ? AND p.payment_status = 'Paid'";
+        
+        PreparedStatement pst = conn.prepareStatement(sql);
+        pst.setString(1, bookingId);
+        ResultSet rs = pst.executeQuery();
+
+        if (rs.next()) {
+            buildReceiptText(rs);
+        } else {
+            receiptPane.setText("No paid receipt found for Booking ID: " + bookingId);
+        }
+        conn.close();
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(null, e);
+    }
+}
+
+    private void buildReceiptText(ResultSet rs) throws Exception {
+        String fullName = rs.getString("first_name") + " " + rs.getString("last_name");
+        String receiptText = 
+            "==========================================\n" +
+            "            BRYL HOTEL BOOKING            \n" +
+            "         Official Payment Receipt         \n" +
+            "==========================================\n" +
+            "Date: " + rs.getString("payment_date") + "\n" +
+            "Receipt No: " + rs.getString("payment_id") + "\n" +
+            "Guest Name: " + fullName + "\n" +
+            "Booking ID: " + rs.getString("bookings_id") + "\n" +
+            "------------------------------------------\n" +
+            "Description                Amount         \n" +
+            "Hotel Room Booking         PHP " + rs.getString("amount") + "\n" +
+            "------------------------------------------\n" +
+            "TOTAL PAID:                PHP " + rs.getString("amount") + "\n" +
+            "Payment Method:            " + rs.getString("payment_method") + "\n" +
+            "Status:                    OFFICIALLY PAID\n" +
+            "==========================================\n" +
+            "       Thank you for choosing BrylHotel!  \n" +
+            "==========================================";
+        receiptPane.setText(receiptText);
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -91,7 +125,7 @@ public class viewreceipt extends javax.swing.JFrame {
 
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jPanel2.setBackground(new java.awt.Color(153, 153, 153));
+        jPanel2.setBackground(new java.awt.Color(102, 153, 255));
         jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 36)); // NOI18N
@@ -100,7 +134,7 @@ public class viewreceipt extends javax.swing.JFrame {
 
         jPanel1.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 580, 80));
 
-        jPanel3.setBackground(new java.awt.Color(153, 153, 153));
+        jPanel3.setBackground(new java.awt.Color(102, 153, 255));
         jPanel3.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jLabel2.setFont(new java.awt.Font("Tahoma", 0, 36)); // NOI18N
@@ -154,10 +188,14 @@ public class viewreceipt extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jLabel3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel3MouseClicked
-      dashboardguest dash = new dashboardguest();
-      dash.setVisible(true);
+      if (fromAdmin) {
+          dashboardAdmin.dashboardadmin dash = new dashboardAdmin.dashboardadmin();
+          dash.setVisible(true);
+      } else {
+          dashboardguest dash = new dashboardguest();
+          dash.setVisible(true);
+      }
       this.dispose();
-        // TODO add your handling code here:
     }//GEN-LAST:event_jLabel3MouseClicked
 
     /**
